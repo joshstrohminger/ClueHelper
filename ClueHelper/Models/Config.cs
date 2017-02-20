@@ -2,6 +2,7 @@
 {
     public static class Config
     {
+        // todo, this shouldn't exist, it should be a property of the game since it needs to be dynamic
         public const int CardsPerSuggestion = 3;
 
         public const int MinPlayers = 3;

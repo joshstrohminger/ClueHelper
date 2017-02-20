@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Input;
 using ClueHelper;
 using ClueHelper.Models;
 
@@ -8,6 +9,9 @@ namespace ScoreCard
     public class MainViewModelDesignData : IMainViewModel
     {
         public Solver Solver { get; }
+        public RelayCommand<Player> StartSuggestion { get; } = new RelayCommand<Player>(x => { });
+        public ICommand MakeSuggestion { get; } = new RelayCommand(() => { });
+        public RelayCommand<Card> SuggestCard { get; } = new RelayCommand<Card>(x => { });
 
         public MainViewModelDesignData()
         {

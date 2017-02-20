@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ClueHelper.Models
 {
-    public class Game
+    public class Game : ObservableObject
     {
         public IReadOnlyCollection<Category> Categories { get; }
         public IReadOnlyCollection<Player> Players { get; }
@@ -14,6 +14,26 @@ namespace ClueHelper.Models
         {
             Categories = new ReadOnlyCollection<Category>(categories.ToList());
             Players = new ReadOnlyCollection<Player>(players.ToList());
+            Players.First().IsTakingTurn = true;
+        }
+
+        public void NextTurn()
+        {
+            var found = false;
+
+            foreach (var player in Players)
+            {
+                if (found)
+                {
+                    player.IsTakingTurn = true;
+                    return;
+                }
+
+                found = player.IsTakingTurn;
+                player.IsTakingTurn = false;
+            }
+
+            Players.First().IsTakingTurn = true;
         }
 
         public class Builder

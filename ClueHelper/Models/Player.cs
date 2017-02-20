@@ -4,11 +4,23 @@ using System.Linq;
 
 namespace ClueHelper.Models
 {
-    public class Player
+    public class Player : ObservableObject
     {
+        private bool _isTakingTurn;
+
         public IReadOnlyCollection<Card> Hand { get; private set; } = new ReadOnlyCollection<Card>(new List<Card>());
         public string Name { get; }
         public Card Representative { get; }
+
+        public bool IsTakingTurn
+        {
+            get { return _isTakingTurn; }
+            set
+            {
+                _isTakingTurn = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Player(string name, Card representative)
         {

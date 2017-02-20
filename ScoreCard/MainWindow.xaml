@@ -43,6 +43,15 @@
                                     <TextBlock.LayoutTransform>
                                         <RotateTransform Angle="270"/>
                                     </TextBlock.LayoutTransform>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsTakingTurn}" Value="True">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
                                 </TextBlock>
                             </Border>
                         </Grid>
