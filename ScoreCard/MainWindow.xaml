@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScoreCard"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="MainWindow" Height="350" Width="525">
     <Window.DataContext>
-        <local:ViewModel/>
+        <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
     </Grid>
