@@ -9,6 +9,7 @@ namespace ClueHelper.Models
         public string Name { get; }
         public Player Holder { get; set; }
         public Player Representative { get; set; }
+        public bool IsPartOfAccusation { get; set; }
         public ObservableCollection<PlayerPossibility> Possibilities { get; } = new ObservableCollection<PlayerPossibility>();
 
         public Card(Category category, string name)
