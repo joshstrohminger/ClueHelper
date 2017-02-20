@@ -11,7 +11,7 @@ namespace ClueHelper
         public Game Game { get; }
         public Player MyPlayer { get; }
 
-        public IReadOnlyDictionary<Card, Dictionary<Player, Possibility>> Possibilities { get; }
+        public IReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>> Possibilities { get; }
         public IReadOnlyDictionary<Player, ObservableCollection<List<Card>>> PlayerMaybeHistory { get; }
 
         public Solver(Game game, Player playAs)
@@ -32,14 +32,22 @@ namespace ClueHelper
             Game = game;
             MyPlayer = playAs;
 
-            Possibilities = new ReadOnlyDictionary<Card, Dictionary<Player, Possibility>>(
+            foreach (var card in Game.Categories.SelectMany(category => category.Cards))
+            {
+                foreach (var player in Game.Players)
+                {
+                    card.Possibilities.Add(new PlayerPossibility(player));
+                }
+            }
+
+            Possibilities = new ReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>>(
                 Game.Categories
                     .SelectMany(category => category.Cards)
                     .ToDictionary(
                         card => card,
-                        card => Game.Players.ToDictionary(
-                            player => player,
-                            player => Possibility.Unknown)));
+                        card => card.Possibilities.ToDictionary(
+                            possibility => possibility.Player,
+                            possibility => possibility)));
 
             PlayerMaybeHistory = new ReadOnlyDictionary<Player, ObservableCollection<List<Card>>>(
                 Game.Players.ToDictionary(player => player, player => new ObservableCollection<List<Card>>()));
@@ -49,12 +57,12 @@ namespace ClueHelper
         {
             ValidateInGame(player);
             ValidateInGame(card);
-            if (Possibilities[card][player] == Possibility.NotHolding)
+            if (Possibilities[card][player].Possibility == Possibility.NotHolding)
             {
                 throw new InvalidOperationException($"{player.Name} already marked {card.Name} as {Possibility.NotHolding}.");
             }
             player.PutCardInHand(card);
-            Possibilities[card][player] = Possibility.Holding;
+            Possibilities[card][player].Possibility = Possibility.Holding;
             MakeInferences();
         }
 
@@ -69,7 +77,7 @@ namespace ClueHelper
                 {
                     throw new InvalidOperationException($"{player.Name} already has {card.Name} in their hand.");
                 }
-                Possibilities[card][player] = Possibility.NotHolding;
+                Possibilities[card][player].Possibility = Possibility.NotHolding;
             }
             MakeInferences();
         }
@@ -84,7 +92,7 @@ namespace ClueHelper
             }
 
             var maybes = cards
-                .Where(card => Possibilities[card][player] <= Possibility.Maybe)
+                .Where(card => Possibilities[card][player].Possibility <= Possibility.Maybe)
                 .OrderBy(card => card.Name)
                 .ToList();
             if (maybes.Count == 0)
@@ -93,13 +101,13 @@ namespace ClueHelper
             }
             foreach (var card in maybes)
             {
-                Possibilities[card][player] = Possibility.Maybe;
+                Possibilities[card][player].Possibility = Possibility.Maybe;
             }
 
             // can't add to maybe history if one of them is already in their hand
             // the info would be meaningless to us in the future so no need to save it
             var notMaybes = cards.Except(maybes).ToList();
-            if (notMaybes.All(card => Possibilities[card][player] == Possibility.NotHolding))
+            if (notMaybes.All(card => Possibilities[card][player].Possibility == Possibility.NotHolding))
             {
                 if (maybes.Count == 1)
                 {

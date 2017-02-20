@@ -1,4 +1,7 @@
-﻿namespace ClueHelper.Models
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace ClueHelper.Models
 {
     public class Card
     {
@@ -6,6 +9,7 @@
         public string Name { get; }
         public Player Holder { get; set; }
         public Player Representative { get; set; }
+        public ObservableCollection<PlayerPossibility> Possibilities { get; } = new ObservableCollection<PlayerPossibility>();
 
         public Card(Category category, string name)
         {

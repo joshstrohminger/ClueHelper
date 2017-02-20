@@ -10,9 +10,11 @@
         Title="Score Card" Height="350" Width="700">
     <Window.Resources>
         <local:CardListConverter x:Key="CardListConverter"/>
+        <local:PossibilityConverter x:Key="PossibilityConverter"/>
+        <SolidColorBrush Color="LightGray" x:Key="BorderBrush"/>
     </Window.Resources>
-    <StackPanel Orientation="Vertical">
-        <Grid x:Name="Possibilities" IsSharedSizeScope="True">
+    <StackPanel Orientation="Horizontal">
+        <Grid x:Name="Possibilities" IsSharedSizeScope="True" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition SharedSizeGroup="CardNames"/>
                 <ColumnDefinition Width="Auto"/>
@@ -21,45 +23,112 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <ItemsControl x:Name="PlayerNames" Grid.Row="0" Grid.Column="1"></ItemsControl>
+            <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
+                <TextBlock Text="{Binding Solver.MyPlayer.Name, StringFormat='Playing as {0}'}" TextWrapping="Wrap" Margin="2"/>
+            </Border>
+            <ItemsControl x:Name="PlayerNames" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Solver.Game.Players}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="PlayerName"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="0,1,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                <TextBlock Text="{Binding Name}" Padding="2" Background="LightGreen">
+                                    <TextBlock.LayoutTransform>
+                                        <RotateTransform Angle="270"/>
+                                    </TextBlock.LayoutTransform>
+                                </TextBlock>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <ItemsControl x:Name="Groups" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Solver.Game.Categories}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:Category">
-                        <TextBlock Text="{Binding Name}" Background="LightBlue" Padding="5,2"/>
+                        <StackPanel Orientation="Vertical">
+                            <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                <TextBlock Text="{Binding Name}" Background="LightPink" Padding="10,2"/>
+                            </Border>
+                            <ItemsControl ItemsSource="{Binding Cards}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition SharedSizeGroup="CardNames"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                                <TextBlock Text="{Binding Name}" Background="LightBlue" Padding="2"/>
+                                            </Border>
+                                            <ItemsControl ItemsSource="{Binding Possibilities}" Grid.Column="1">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition SharedSizeGroup="PlayerName"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border BorderThickness="0,0,1,1" BorderBrush="{StaticResource BorderBrush}">
+                                                                <TextBlock Text="{Binding Possibility, Converter={StaticResource PossibilityConverter}}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                                            </Border>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Grid>
-        <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition SharedSizeGroup="Maybes"/>
-                        </Grid.ColumnDefinitions>
-                        <DockPanel LastChildFill="True">
-                            <TextBlock DockPanel.Dock="Top" Text="{Binding Key.Name}" Background="LightGray" Padding="5,2" TextAlignment="Center"/>
-                            <ItemsControl ItemsSource="{Binding Value}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding ., Converter={StaticResource CardListConverter}}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DockPanel>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <Border BorderThickness="1,1,0,1" BorderBrush="{StaticResource BorderBrush}" Margin="5">
+            <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="Maybes"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource BorderBrush}">
+                                <DockPanel LastChildFill="True">
+                                    <TextBlock DockPanel.Dock="Top" Text="{Binding Key.Name}" Background="LightGray" Padding="5,2" TextAlignment="Center"/>
+                                    <ItemsControl ItemsSource="{Binding Value}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Padding="2,0" Text="{Binding ., Converter={StaticResource CardListConverter}}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
     </StackPanel>
 </Window>
