@@ -1,8 +1,13 @@
-﻿namespace ClueHelper.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace ClueHelper.Models
 {
-    internal class Player
+    public class Player
     {
-        public Card[] Hand { get; } = new Card[Config.CardsPerPlayer];
+        public IReadOnlyCollection<Card> Hand { get; private set; } = new ReadOnlyCollection<Card>(new List<Card>());
         public string Name { get; }
         public Card Representative { get; }
 
@@ -10,6 +15,19 @@
         {
             Name = name;
             Representative = representative;
+        }
+
+        internal void PutCardInHand(Card card)
+        {
+            if (Hand.Count >= Config.CardsPerPlayer)
+            {
+                throw new InvalidOperationException("Player already has a full hand.");
+            }
+
+            if (!Hand.Contains(card))
+            {
+                Hand = new ReadOnlyCollection<Card>(Hand.Concat(new[] {card}).ToList());
+            }
         }
 
         public override string ToString()

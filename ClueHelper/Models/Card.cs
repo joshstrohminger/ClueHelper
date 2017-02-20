@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace ClueHelper.Models
+﻿namespace ClueHelper.Models
 {
-    internal class Card
+    public class Card
     {
         public Category Category { get; }
         public string Name { get; }

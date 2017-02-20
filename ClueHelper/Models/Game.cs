@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ClueHelper.Models
 {
-    internal class Game
+    public class Game
     {
         public IReadOnlyCollection<Category> Categories { get; }
         public IReadOnlyCollection<Player> Players { get; }
@@ -51,11 +51,11 @@ namespace ClueHelper.Models
                 {
                     throw new ArgumentNullException(nameof(representative));
                 }
-                if (_categories.SelectMany(category => category.Cards).All(card => !object.ReferenceEquals(card, representative)))
+                if (_categories.SelectMany(category => category.Cards).All(card => !ReferenceEquals(card, representative)))
                 {
                     throw new ArgumentException("Card must be from an existing category.", nameof(representative));
                 }
-                if(_players.Any(p => object.ReferenceEquals(p.Representative, representative)))
+                if(_players.Any(p => ReferenceEquals(p.Representative, representative)))
                 {
                     throw new ArgumentException("Card is already representing another player.", nameof(representative));
                 }

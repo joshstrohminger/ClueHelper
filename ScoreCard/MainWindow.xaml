@@ -6,10 +6,7 @@
         xmlns:local="clr-namespace:ScoreCard"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="350" Width="525">
-    <Window.DataContext>
-        <local:MainViewModel/>
-    </Window.DataContext>
+        Title="Score Card" Height="350" Width="525">
     <Grid>
     </Grid>
 </Window>

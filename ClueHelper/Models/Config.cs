@@ -1,11 +1,11 @@
 ﻿namespace ClueHelper.Models
 {
-    internal static class Config
+    public static class Config
     {
         public const int CardsPerPlayer = 3;
         public const int MinPlayers = 3;
 
-        public static Game GetDefaultGame()
+        public static Game BuildDefaultGame()
         {
             var people = new Category.Builder("People")
                 .AddCard("Ms. Scarlet")

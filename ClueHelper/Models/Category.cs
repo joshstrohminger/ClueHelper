@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ClueHelper.Models
 {
-    internal class Category
+    public class Category
     {
         public string Name { get; }
         public Card[] Cards { get; }

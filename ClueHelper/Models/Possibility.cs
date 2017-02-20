@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ClueHelper.Models
 {
-    internal enum Possibility
+    public enum Possibility
     {
         Unknown,
+        Maybe,
         NotHolding,
-        Revealed,
-        Holder
+        Holding
     }
 }
