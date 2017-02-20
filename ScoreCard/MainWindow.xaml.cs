@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 using ClueHelper;
 using ClueHelper.Models;
 
@@ -22,8 +23,6 @@ namespace ScoreCard
 
             _vm = new MainViewModel(solver);
             DataContext = _vm;
-
-
 
             var random = new Random();
 

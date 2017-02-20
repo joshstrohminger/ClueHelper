@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScoreCard"
         xmlns:models="clr-namespace:ClueHelper.Models;assembly=ClueHelper"
-        mc:Ignorable="d"
+        mc:Ignorable="d" WindowState="Maximized"
         d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Score Card" Height="350" Width="700">
     <Window.Resources>
@@ -80,7 +80,7 @@
                                                                 <ColumnDefinition SharedSizeGroup="PlayerName"/>
                                                             </Grid.ColumnDefinitions>
                                                             <Border BorderThickness="0,0,1,1" BorderBrush="{StaticResource BorderBrush}">
-                                                                <TextBlock Text="{Binding Possibility, Converter={StaticResource PossibilityConverter}}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                                                <TextBlock Text="{Binding Possibility, Converter={StaticResource PossibilityConverter}}" HorizontalAlignment="Stretch" TextAlignment="Center" VerticalAlignment="Center"/>
                                                             </Border>
                                                         </Grid>
                                                     </DataTemplate>
