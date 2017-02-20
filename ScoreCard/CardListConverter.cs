@@ -12,7 +12,7 @@ namespace ScoreCard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var cards = value as IList<Card>;
-            return null == cards ? string.Empty : string.Join(",", cards);
+            return null == cards ? string.Empty : string.Join(", ", cards);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
