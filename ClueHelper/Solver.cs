@@ -12,7 +12,7 @@ namespace ClueHelper
         public Player MyPlayer { get; }
 
         public IReadOnlyDictionary<Card, Dictionary<Player, Possibility>> Possibilities { get; }
-        public IReadOnlyDictionary<Player, List<List<Card>>> PlayerMaybeHistory { get; }
+        public IReadOnlyDictionary<Player, ObservableCollection<List<Card>>> PlayerMaybeHistory { get; }
 
         public Solver(Game game, Player playAs)
         {
@@ -41,8 +41,8 @@ namespace ClueHelper
                             player => player,
                             player => Possibility.Unknown)));
 
-            PlayerMaybeHistory = new ReadOnlyDictionary<Player, List<List<Card>>>(
-                Game.Players.ToDictionary(player => player, player => new List<List<Card>>()));
+            PlayerMaybeHistory = new ReadOnlyDictionary<Player, ObservableCollection<List<Card>>>(
+                Game.Players.ToDictionary(player => player, player => new ObservableCollection<List<Card>>()));
         }
 
         public void PlayerHasCard(Player player, Card card)
@@ -58,9 +58,10 @@ namespace ClueHelper
             MakeInferences();
         }
 
-        public void PlayerDoesNotHaveCards(Player player, IEnumerable<Card> cards)
+        public void PlayerDoesNotHaveCards(Player player, IEnumerable<Card> cardsTheyDontHave)
         {
             ValidateInGame(player);
+            var cards = ValidateCardCount(cardsTheyDontHave);
             foreach (var card in cards)
             {
                 ValidateInGame(card);
@@ -73,9 +74,10 @@ namespace ClueHelper
             MakeInferences();
         }
 
-        public void PlayerMightHaveCards(Player player, IEnumerable<Card> cards)
+        public void PlayerMightHaveCards(Player player, IEnumerable<Card> cardsTheyMightHave)
         {
             ValidateInGame(player);
+            var cards = ValidateCardCount(cardsTheyMightHave);
             foreach (var card in cards)
             {
                 ValidateInGame(card);
@@ -108,7 +110,7 @@ namespace ClueHelper
 
                 var history = PlayerMaybeHistory[player];
                 // only add unique lists
-                if(!history.All(list => list.SequenceEqual(maybes)))
+                if(history.All(list => !list.SequenceEqual(maybes)))
                 {
                     history.Add(maybes);   
                 }
@@ -146,6 +148,28 @@ namespace ClueHelper
             {
                 throw new ArgumentException("Card must be from this game.", nameof(card));
             }
+        }
+
+        private Card[] ValidateCardCount(IEnumerable<Card> cards)
+        {
+            if (null == cards)
+            {
+                throw new ArgumentNullException(nameof(cards));
+            }
+
+            var cardsToCheck = cards.ToArray();
+
+            if (cardsToCheck.Length != Config.CardsPerPlayer)
+            {
+                throw new ArgumentException($"Hands must contain {Config.CardsPerPlayer} cards.");
+            }
+
+            foreach (var card in cardsToCheck)
+            {
+                ValidateInGame(card);
+            }
+
+            return cardsToCheck;
         }
 
         #endregion Helpers

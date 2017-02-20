@@ -6,7 +6,39 @@
         xmlns:local="clr-namespace:ScoreCard"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
-        Title="Score Card" Height="350" Width="525">
-    <Grid>
-    </Grid>
+        Title="Score Card" Height="350" Width="700">
+    <Window.Resources>
+        <local:CardListConverter x:Key="CardListConverter"/>
+    </Window.Resources>
+    <StackPanel Orientation="Vertical">
+        <Grid x:Name="PossibilityGrid">
+            
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Top" Text="{Binding Key.Name}" Background="LightGray" Padding="5,2"/>
+                        <ItemsControl ItemsSource="{Binding Value}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ., Converter={StaticResource CardListConverter}}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </Window>
