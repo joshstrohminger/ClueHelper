@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScoreCard"
+        xmlns:models="clr-namespace:ClueHelper.Models;assembly=ClueHelper"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Score Card" Height="350" Width="700">
@@ -11,8 +12,23 @@
         <local:CardListConverter x:Key="CardListConverter"/>
     </Window.Resources>
     <StackPanel Orientation="Vertical">
-        <Grid x:Name="PossibilityGrid">
-            
+        <Grid x:Name="Possibilities" IsSharedSizeScope="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="CardNames"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ItemsControl x:Name="PlayerNames" Grid.Row="0" Grid.Column="1"></ItemsControl>
+            <ItemsControl x:Name="Groups" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Solver.Game.Categories}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:Category">
+                        <TextBlock Text="{Binding Name}" Background="LightBlue" Padding="5,2"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
         <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
             <ItemsControl.ItemsPanel>
