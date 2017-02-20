@@ -24,7 +24,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
-                <TextBlock Text="{Binding Solver.MyPlayer.Name, StringFormat='Playing as {0}'}" TextWrapping="Wrap" Margin="2"/>
+                <TextBlock Text="{Binding Solver.MyPlayer.Name, StringFormat='Playing as {0}'}" TextWrapping="Wrap" Margin="2" VerticalAlignment="Center" TextAlignment="Center"/>
             </Border>
             <ItemsControl x:Name="PlayerNames" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Solver.Game.Players}">
                 <ItemsControl.ItemsPanel>
@@ -39,7 +39,7 @@
                                 <ColumnDefinition SharedSizeGroup="PlayerName"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Border BorderThickness="0,1,1,1" BorderBrush="{StaticResource BorderBrush}">
-                                <TextBlock Text="{Binding Name}" Padding="2" Background="LightGreen">
+                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Representative.Name}" Padding="2" Background="LightGreen">
                                     <TextBlock.LayoutTransform>
                                         <RotateTransform Angle="270"/>
                                     </TextBlock.LayoutTransform>

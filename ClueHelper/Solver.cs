@@ -167,9 +167,9 @@ namespace ClueHelper
 
             var cardsToCheck = cards.ToArray();
 
-            if (cardsToCheck.Length != Config.CardsPerPlayer)
+            if (cardsToCheck.Length != Config.CardsPerSuggestion)
             {
-                throw new ArgumentException($"Hands must contain {Config.CardsPerPlayer} cards.");
+                throw new ArgumentException($"Hands must contain {Config.CardsPerSuggestion} cards.");
             }
 
             foreach (var card in cardsToCheck)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Windows;
 using ClueHelper;
 using ClueHelper.Models;
 
@@ -29,16 +28,19 @@ namespace ScoreCard
             var shuffledCards = game.Categories
                 .SelectMany(category => category.Cards)
                 .OrderBy(card => random.Next())
+                .Skip(Config.CardsPerSuggestion) // the answer
                 .ToArray();
 
-            foreach (var card in shuffledCards.Take(Config.CardsPerPlayer))
+            var cardsPerHand = shuffledCards.Length / game.Players.Count;
+
+            foreach (var card in shuffledCards.Take(cardsPerHand))
             {
                 solver.PlayerHasCard(me, card);
             }
 
-            solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(Config.CardsPerPlayer).First());
-            solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(Config.CardsPerPlayer + 1).Take(Config.CardsPerPlayer));
-            solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(Config.CardsPerPlayer * 2 + 1).Take(Config.CardsPerPlayer));
+            solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(cardsPerHand).First());
+            solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(Config.CardsPerSuggestion));
+            solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + Config.CardsPerSuggestion + 1).Take(Config.CardsPerSuggestion));
         }
     }
 }

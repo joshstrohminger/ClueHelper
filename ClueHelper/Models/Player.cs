@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -19,11 +18,6 @@ namespace ClueHelper.Models
 
         internal void PutCardInHand(Card card)
         {
-            if (Hand.Count >= Config.CardsPerPlayer)
-            {
-                throw new InvalidOperationException("Player already has a full hand.");
-            }
-
             if (!Hand.Contains(card))
             {
                 Hand = new ReadOnlyCollection<Card>(Hand.Concat(new[] {card}).ToList());

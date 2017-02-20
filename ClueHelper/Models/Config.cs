@@ -2,7 +2,8 @@
 {
     public static class Config
     {
-        public const int CardsPerPlayer = 3;
+        public const int CardsPerSuggestion = 3;
+
         public const int MinPlayers = 3;
 
         public static Game BuildDefaultGame()
@@ -18,10 +19,7 @@
 
             var weapons = new Category.Builder("Weapons")
                 .AddCard("Candlestick")
-                .AddCard("Poison")
                 .AddCard("Rope")
-                .AddCard("Gloves")
-                .AddCard("Horseshoe")
                 .AddCard("Knife")
                 .AddCard("Lead Pipe")
                 .AddCard("Revolver")
@@ -38,7 +36,6 @@
                 .AddCard("Hall")
                 .AddCard("Lounge")
                 .AddCard("Dining Room")
-                .AddCard("Cellar")
                 .Build();
 
             return new Game.Builder()

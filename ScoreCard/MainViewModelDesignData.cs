@@ -21,16 +21,19 @@ namespace ScoreCard
             var shuffledCards = game.Categories
                 .SelectMany(category => category.Cards)
                 .OrderBy(card => random.Next())
+                .Skip(Config.CardsPerSuggestion) // the answer
                 .ToArray();
 
-            foreach (var card in shuffledCards.Take(Config.CardsPerPlayer))
+            var cardsPerHand = shuffledCards.Length / game.Players.Count;
+
+            foreach (var card in shuffledCards.Take(cardsPerHand))
             {
                 Solver.PlayerHasCard(me, card);
             }
 
-            Solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(Config.CardsPerPlayer).First());
-            Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(Config.CardsPerPlayer+1).Take(Config.CardsPerPlayer));
-            Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(Config.CardsPerPlayer*2+1).Take(Config.CardsPerPlayer));
+            Solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(cardsPerHand).First());
+            Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(Config.CardsPerSuggestion));
+            Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + Config.CardsPerSuggestion + 1).Take(Config.CardsPerSuggestion));
         }
     }
 }
