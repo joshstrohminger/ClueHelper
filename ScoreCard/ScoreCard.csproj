@@ -59,11 +59,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DesignData\GameBuilderViewModelDesignData.cs" />
+    <Compile Include="Interfaces\IGameBuilderViewModel.cs" />
+    <Compile Include="Models\PotentialPlayer.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="DesignData\DialogViewModelDesignData.cs" />
     <Compile Include="Interfaces\IDialogViewModel.cs" />
     <Compile Include="Interfaces\IMainViewModel.cs" />
     <Compile Include="DesignData\MainViewModelDesignData.cs" />
+    <Compile Include="ViewModels\GameBuilderViewModel.cs" />
+    <Compile Include="Views\GameBuilderDialog.xaml.cs">
+      <DependentUpon>GameBuilderDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PossibilityConverter.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -71,6 +78,10 @@
     <Compile Include="Views\SuggestionResponseDialog.xaml.cs">
       <DependentUpon>SuggestionResponseDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\GameBuilderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -1,0 +1,45 @@
+﻿<Window x:Class="ScoreCard.Views.GameBuilderDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScoreCard.Views"
+        xmlns:designData="clr-namespace:ScoreCard.DesignData"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=designData:GameBuilderViewModelDesignData, IsDesignTimeCreatable=True}"
+        Title="Game Builder" Height="300" Width="300">
+    <DockPanel LastChildFill="True">
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button Content="Build"/>
+            <Button Content="Nevermind"/>
+        </UniformGrid>
+        <Button Content="Add Player" DockPanel.Dock="Top"/>
+        <ItemsControl ItemsSource="{Binding Players}" Grid.IsSharedSizeScope="True">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" SharedSizeGroup="Name"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Me"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Piece"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Up"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Down"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Remove"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding Name}" HorizontalAlignment="Stretch" Grid.Column="0"/>
+                        <RadioButton Content="Me" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Me}" GroupName="Me"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.Pieces, RelativeSource={RelativeSource AncestorType=designData:GameBuilderViewModelDesignData}}" SelectedValue="{Binding Piece}"/>
+                        <Button Content="Up" Grid.Column="3"/>
+                        <Button Content="Down" Grid.Column="4"/>
+                        <Button Content="Remove" Grid.Column="5"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</Window>

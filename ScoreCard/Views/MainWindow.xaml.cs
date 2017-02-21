@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 using ClueHelper;
 using ScoreCard.Interfaces;
 using ScoreCard.ViewModels;
@@ -13,8 +14,29 @@ namespace ScoreCard.Views
         public MainWindow()
         {
             InitializeComponent();
-            _vm = UseDefaultGame();
+
+            var result = MessageBox.Show("Build Test Game?", "Build Test Game Now?", MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            _vm = result == MessageBoxResult.Yes ? UseDefaultGame() : BuildGame();
+
             DataContext = _vm;
+        }
+
+        private static IMainViewModel BuildGame()
+        {
+            var builder = new GameBuilderViewModel();
+            new GameBuilderDialog(builder).ShowDialog();
+            var game = builder.GameResult;
+            if (null == game)
+            {
+                return UseDefaultGame();
+            }
+            var myName = builder.Players.First(player => player.Me).Name;
+            var me = game.Players.First(player => player.Name == myName);
+            var solver = new Solver(game, me);
+
+            // todo, need to figure out how to let the user select the cards they were dealt
+            return new MainViewModel(solver);
         }
 
         private static IMainViewModel UseDefaultGame()
