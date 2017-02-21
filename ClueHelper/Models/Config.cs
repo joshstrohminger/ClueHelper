@@ -2,16 +2,13 @@
 {
     public static class Config
     {
-        // todo, this shouldn't exist, it should be a property of the game since it needs to be dynamic
-        public const int CardsPerSuggestion = 3;
-
         public const int MinPlayers = 3;
 
         public static Game BuildDefaultGame()
         {
             var people = new Category.Builder("People")
                 .AddCard("Ms. Scarlet")
-                .AddCard("Col Mustard")
+                .AddCard("Col. Mustard")
                 .AddCard("Mrs. White")
                 .AddCard("Mr. Green")
                 .AddCard("Mrs. Peacock")

@@ -12,7 +12,7 @@ namespace ClueHelper
         public Player MyPlayer { get; }
 
         public IReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>> Possibilities { get; }
-        public IReadOnlyDictionary<Player, ObservableCollection<List<Card>>> PlayerMaybeHistory { get; }
+        public IReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>> PlayerMaybeHistory { get; }
 
         public Solver(Game game, Player playAs)
         {
@@ -49,8 +49,8 @@ namespace ClueHelper
                             possibility => possibility.Player,
                             possibility => possibility)));
 
-            PlayerMaybeHistory = new ReadOnlyDictionary<Player, ObservableCollection<List<Card>>>(
-                Game.Players.ToDictionary(player => player, player => new ObservableCollection<List<Card>>()));
+            PlayerMaybeHistory = new ReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>>(
+                Game.Players.ToDictionary(player => player, player => new ObservableCollection<ObservableCollection<Card>>()));
         }
 
         public void PlayerHasCard(Player player, Card card)
@@ -81,16 +81,17 @@ namespace ClueHelper
             var cards = ValidateCardCount(cardsTheyDontHave);
             foreach (var card in cards)
             {
-                ValidateInGame(card);
                 if (player.Hand.Contains(card))
                 {
                     throw new GameException($"{player.Name} already has {card.Name} in their hand.");
                 }
             }
+
             foreach (var card in cards)
             {
                 Possibilities[card][player].Possibility = Possibility.NotHolding;
             }
+
             MakeInferences();
         }
 
@@ -132,9 +133,11 @@ namespace ClueHelper
                 // only add unique lists
                 if(history.All(list => !list.SequenceEqual(maybes)))
                 {
-                    history.Add(maybes);   
+                    history.Add(new ObservableCollection<Card>(maybes));   
                 }
             }
+
+            MakeInferences();
         }
 
         // make inferences based on nobody having any of the cards
@@ -154,6 +157,8 @@ namespace ClueHelper
                     poss.Possibility = Possibility.NotHolding;
                 }
             }
+
+            MakeInferences();
         }
 
         private void MakeInferences()
@@ -171,12 +176,16 @@ namespace ClueHelper
             {
                 var player = playerHistory.Key;
 
-                var historiesToRemove = new List<List<Card>>();
+                var historiesToRemove = new List<ObservableCollection<Card>>();
 
                 foreach (var maybe in playerHistory.Value)
                 {
                     // narrow down the list by removing cards that we now know the player didn't have
-                    maybe.RemoveAll(card => Possibilities[card][player].Possibility == Possibility.NotHolding);
+                    var notHolding = maybe.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding).ToList();
+                    foreach (var card in notHolding)
+                    {
+                        maybe.Remove(card);
+                    }
                     if (maybe.Count == 0)
                     {
                         throw new GameException($"{player.Name} showed a card that we think they don't have.");
@@ -230,9 +239,9 @@ namespace ClueHelper
 
             var cardsToCheck = cards.ToArray();
 
-            if (cardsToCheck.Length != Config.CardsPerSuggestion)
+            if (cardsToCheck.Length != Game.CardsPerSuggestion)
             {
-                throw new ArgumentException($"Hands must contain {Config.CardsPerSuggestion} cards.");
+                throw new ArgumentException($"Hands must contain {Game.CardsPerSuggestion} cards.");
             }
 
             foreach (var card in cardsToCheck)

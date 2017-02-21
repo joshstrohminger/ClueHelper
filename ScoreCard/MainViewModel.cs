@@ -103,7 +103,12 @@ namespace ScoreCard
             if (ReferenceEquals(player, Solver.MyPlayer))
             {
                 MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
-                return !player.Hand.Intersect(_selectedCards).Any();
+                if (player.Hand.Intersect(_selectedCards).Any())
+                {
+                    stopped = true;
+                    return false;
+                }
+                return false;
             }
             var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
             new SuggestionResponseDialog(vm).ShowDialog();
@@ -133,8 +138,8 @@ namespace ScoreCard
         private bool CanMakeSuggestion()
         {
             return State.BuildingSuggestion == _state &&
-                _selectedCards.Count == Config.CardsPerSuggestion &&
-                _selectedCards.Select(card => card.Category).Distinct().Count() == Config.CardsPerSuggestion;
+                _selectedCards.Count == Solver.Game.CardsPerSuggestion &&
+                _selectedCards.Select(card => card.Category).Distinct().Count() == Solver.Game.CardsPerSuggestion;
         }
 
         private void ToggleCardInSuggestion(Card card)

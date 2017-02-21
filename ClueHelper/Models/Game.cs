@@ -9,12 +9,14 @@ namespace ClueHelper.Models
     {
         public IReadOnlyCollection<Category> Categories { get; }
         public ReadOnlyCollection<Player> Players { get; }
+        public int CardsPerSuggestion { get; }
 
         private Game(IEnumerable<Category> categories, IEnumerable<Player> players)
         {
             Categories = new ReadOnlyCollection<Category>(categories.ToList());
             Players = new ReadOnlyCollection<Player>(players.ToList());
             Players.First().IsTakingTurn = true;
+            CardsPerSuggestion = Categories.Count;
         }
 
         public void NextTurn()

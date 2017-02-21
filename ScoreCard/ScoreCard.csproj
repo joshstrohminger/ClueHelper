@@ -56,7 +56,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CardListConverter.cs" />
     <Compile Include="DialogViewModel.cs" />
     <Compile Include="DialogViewModelDesignData.cs" />
     <Compile Include="IDialogViewModel.cs" />

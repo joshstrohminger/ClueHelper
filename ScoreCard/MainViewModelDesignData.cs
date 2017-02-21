@@ -25,7 +25,7 @@ namespace ScoreCard
             var shuffledCards = game.Categories
                 .SelectMany(category => category.Cards)
                 .OrderBy(card => random.Next())
-                .Skip(Config.CardsPerSuggestion) // the answer
+                .Skip(game.CardsPerSuggestion) // the answer
                 .ToArray();
 
             var cardsPerHand = shuffledCards.Length / game.Players.Count;
@@ -36,8 +36,8 @@ namespace ScoreCard
             }
 
             Solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(cardsPerHand).First());
-            Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(Config.CardsPerSuggestion));
-            Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + Config.CardsPerSuggestion + 1).Take(Config.CardsPerSuggestion));
+            Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(game.CardsPerSuggestion));
+            Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
 
             shuffledCards.Last().IsPartOfAccusation = true;
         }

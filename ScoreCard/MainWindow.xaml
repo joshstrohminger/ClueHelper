@@ -9,7 +9,6 @@
         d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Score Card" Height="350" Width="700">
     <Window.Resources>
-        <local:CardListConverter x:Key="CardListConverter"/>
         <local:PossibilityConverter x:Key="PossibilityConverter"/>
         <SolidColorBrush Color="LightGray" x:Key="BorderBrush"/>
     </Window.Resources>
@@ -93,7 +92,7 @@
                                                     <Style TargetType="ItemsControl">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsPartOfAccusation}" Value="True">
-                                                                <Setter Property="Background" Value="Red"/>
+                                                                <Setter Property="Background" Value="Green"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding IsPartOfSuggestion}" Value="True">
                                                                 <Setter Property="Background" Value="Aqua"/>
@@ -152,7 +151,20 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Padding="2,0" Text="{Binding ., Converter={StaticResource CardListConverter}}"/>
+                                                <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderBrush}">
+                                                    <ItemsControl ItemsSource="{Binding .}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Vertical"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Padding="2,0" Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
