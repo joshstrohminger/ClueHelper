@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using ClueHelper.Models;
 
@@ -17,7 +18,7 @@ namespace ScoreCard
                 case Possibility.NotHolding:
                     return "✕";
                 case Possibility.Holding:
-                    return "☐";
+                    return "🂠";
                 case Possibility.Unknown:
                 case null:
                     return string.Empty;
@@ -28,7 +29,7 @@ namespace ScoreCard
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return DependencyProperty.UnsetValue;
         }
     }
 }

@@ -57,36 +57,25 @@ namespace ScoreCard
 
             foreach (var player in playersToAsk)
             {
-                if (ReferenceEquals(player, Solver.MyPlayer))
+                var keepGoing = true;
+                var valid = false;
+                while (!valid)
                 {
-                    MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
-                    continue;
-                }
-                var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
-                new SuggestionResponseDialog(vm).ShowDialog();
-
-                if (vm.Result == DialogResult.Card)
-                {
-                    Solver.PlayerHasCard(player, vm.ResultCard);
-                    stopped = true;
-                    break;
-                }
-
-                if (vm.Result == DialogResult.Maybe)
-                {
-                    Solver.PlayerMightHaveCards(player, _selectedCards);
-                    stopped = true;
-                    break;
+                    try
+                    {
+                        keepGoing = GetSuggestionResponse(player, ref stopped);
+                        valid = true;
+                    }
+                    catch (GameException e)
+                    {
+                        valid = MessageBoxResult.Yes == MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                        keepGoing = false;
+                    }
                 }
 
-                if (vm.Result == DialogResult.Cancel)
+                if (!keepGoing)
                 {
                     break;
-                }
-
-                if (vm.Result == DialogResult.None)
-                {
-                    Solver.PlayerDoesNotHaveCards(player, _selectedCards);
                 }
             }
 
@@ -103,6 +92,38 @@ namespace ScoreCard
             _selectedCards.Clear();
             Solver.Game.NextTurn();
             _state = State.None;
+        }
+
+        private bool GetSuggestionResponse(Player player, ref bool stopped)
+        {
+            if (ReferenceEquals(player, Solver.MyPlayer))
+            {
+                MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
+                return !player.Hand.Intersect(_selectedCards).Any();
+            }
+            var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
+            new SuggestionResponseDialog(vm).ShowDialog();
+
+            switch (vm.Result)
+            {
+                case DialogResult.Cancel:
+                    return false;
+                case DialogResult.Skip:
+                    return true;
+                case DialogResult.Maybe:
+                    Solver.PlayerMightHaveCards(player, _selectedCards);
+                    stopped = true;
+                    return false;
+                case DialogResult.None:
+                    Solver.PlayerDoesNotHaveCards(player, _selectedCards);
+                    return true;
+                case DialogResult.Card:
+                    Solver.PlayerHasCard(player, vm.ResultCard);
+                    stopped = true;
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private bool CanMakeSuggestion()

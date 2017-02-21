@@ -47,7 +47,7 @@ namespace ClueHelper.Models
             {
                 if (_cardNames.Count == 0)
                 {
-                    throw new InvalidOperationException("Can't build empty category.");
+                    throw new GameException("Can't build empty category.");
                 }
                 return new Category(_name, _cardNames);
             }

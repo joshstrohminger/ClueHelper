@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameException.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Config.cs" />

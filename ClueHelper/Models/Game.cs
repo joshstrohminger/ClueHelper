@@ -91,7 +91,7 @@ namespace ClueHelper.Models
             {
                 if (_players.Count < Config.MinPlayers)
                 {
-                    throw new InvalidOperationException($"Can't build game without at least {Config.MinPlayers} players.");
+                    throw new GameException($"Can't build game without at least {Config.MinPlayers} players.");
                 }
 
                 return new Game(_categories, _players);

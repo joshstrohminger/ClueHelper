@@ -59,10 +59,19 @@ namespace ClueHelper
             ValidateInGame(card);
             if (Possibilities[card][player].Possibility == Possibility.NotHolding)
             {
-                throw new InvalidOperationException($"{player.Name} already marked {card.Name} as {Possibility.NotHolding}.");
+                throw new GameException($"{player.Name} already marked {card.Name} as {Possibility.NotHolding}.");
             }
+
+            // mark player
             player.PutCardInHand(card);
             Possibilities[card][player].Possibility = Possibility.Holding;
+
+            // mark off other players
+            foreach (var playerPossibility in Possibilities[card].Values.Where(p => !ReferenceEquals(p.Player, player)))
+            {
+                playerPossibility.Possibility = Possibility.NotHolding;
+            }
+
             MakeInferences();
         }
 
@@ -75,8 +84,11 @@ namespace ClueHelper
                 ValidateInGame(card);
                 if (player.Hand.Contains(card))
                 {
-                    throw new InvalidOperationException($"{player.Name} already has {card.Name} in their hand.");
+                    throw new GameException($"{player.Name} already has {card.Name} in their hand.");
                 }
+            }
+            foreach (var card in cards)
+            {
                 Possibilities[card][player].Possibility = Possibility.NotHolding;
             }
             MakeInferences();

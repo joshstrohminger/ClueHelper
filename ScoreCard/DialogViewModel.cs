@@ -17,5 +17,11 @@ namespace ScoreCard
             Responder = responder;
             Cards = new ReadOnlyCollection<Card>(cards.ToList());
         }
+
+        public void Reset()
+        {
+            ResultCard = null;
+            Result = DialogResult.Cancel;
+        }
     }
 }
