@@ -44,9 +44,13 @@ namespace ScoreCard
                 return;
             }
 
-            throw new NotImplementedException();
+            var currentTurnIndex = Solver.Game.Players.Select((player, i) => player.IsTakingTurn ? i : -1).Max();
+            var playersToAsk = Solver.Game.Players.Skip(currentTurnIndex + 1)
+                .Concat(Solver.Game.Players.Take(currentTurnIndex)).ToList();
 
             _state = State.WaitingForResults;
+
+
         }
 
         private bool CanMakeSuggestion()
