@@ -1,40 +1,55 @@
-﻿namespace ClueHelper.Models
+﻿using ClueHelper.Models;
+
+namespace ClueHelper
 {
     public static class Config
     {
         public const int MinPlayers = 3;
 
-        public static Game BuildDefaultGame()
+        public static Category BuildDefaultPeople()
         {
-            var people = new Category.Builder("People")
-                .AddCard("Ms. Scarlet")
+            return new Category.Builder("People")
                 .AddCard("Col. Mustard")
-                .AddCard("Mrs. White")
-                .AddCard("Mr. Green")
-                .AddCard("Mrs. Peacock")
                 .AddCard("Prof. Plum")
+                .AddCard("Mr. Green")
+                .AddCard("Ms. Scarlet")
+                .AddCard("Mrs. Peacock")
+                .AddCard("Mrs. White")
                 .Build();
+        }
 
-            var weapons = new Category.Builder("Weapons")
-                .AddCard("Candlestick")
-                .AddCard("Rope")
+        public static Category BuildDefaultWeapons()
+        {
+            return new Category.Builder("Weapons")
                 .AddCard("Knife")
-                .AddCard("Lead Pipe")
+                .AddCard("Candlestick")
                 .AddCard("Revolver")
+                .AddCard("Rope")
+                .AddCard("Lead Pipe")
                 .AddCard("Wrench")
                 .Build();
+        }
 
-            var rooms = new Category.Builder("Rooms")
+        public static Category BuildDefaultRooms()
+        {
+            return new Category.Builder("Rooms")
+                .AddCard("Hall")
+                .AddCard("Lounge")
+                .AddCard("Dining Room")
                 .AddCard("Kitchen")
                 .AddCard("Ballroom")
                 .AddCard("Conservatory")
                 .AddCard("Billiard Room")
                 .AddCard("Library")
                 .AddCard("Study")
-                .AddCard("Hall")
-                .AddCard("Lounge")
-                .AddCard("Dining Room")
                 .Build();
+        }
+
+        public static Game BuildDefaultGame()
+        {
+            var people = BuildDefaultPeople();
+            var rooms = BuildDefaultRooms();
+            var weapons = BuildDefaultWeapons();
 
             return new Game.Builder()
                 .AddCategory(people)

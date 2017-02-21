@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ClueHelper;
-using ClueHelper.Models;
 using ScoreCard.Interfaces;
 using ScoreCard.ViewModels;
 
