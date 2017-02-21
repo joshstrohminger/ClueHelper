@@ -7,7 +7,47 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:DialogViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Suggestion Response" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Responder.Name, StringFormat='Response from {0}'}"/>
+        <UniformGrid DockPanel.Dock="Bottom" Columns="3">
+            <UniformGrid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </UniformGrid.Resources>
+            <Button Content="None"
+                    Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
+                    CommandParameter="{x:Static local:DialogResult.None}"/>
+            <Button Content="Maybe"
+                    Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
+                    CommandParameter="{x:Static local:DialogResult.Maybe}"/>
+            <Button Content="Skip"
+                    Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
+                    CommandParameter="{x:Static local:DialogResult.Skip}"/>
+        </UniformGrid>
+        <ItemsControl ItemsSource="{Binding Cards}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ItemsControl.Style>
+                <Style TargetType="ItemsControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Cards.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Name, StringFormat='Has {0}'}"
+                            Command="{Binding CloseWithCard, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
+                            CommandParameter="{Binding .}"
+                            Margin="5"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
 </Window>
