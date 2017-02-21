@@ -24,7 +24,14 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}">
-                <TextBlock Text="{Binding Solver.MyPlayer.Name, StringFormat='Playing as {0}'}" TextWrapping="Wrap" Margin="2" VerticalAlignment="Center" TextAlignment="Center"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding Solver.MyPlayer.Name}" TextWrapping="Wrap" Margin="2" VerticalAlignment="Center" TextAlignment="Center" FontWeight="Bold"/>
+                    <Button Grid.Row="1" Content="Suggest" Command="{Binding MakeSuggestion}"/>
+                </Grid>
             </Border>
             <ItemsControl x:Name="PlayerNames" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Solver.Game.Players}">
                 <ItemsControl.ItemsPanel>
@@ -39,20 +46,23 @@
                                 <ColumnDefinition SharedSizeGroup="PlayerName"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Border BorderThickness="0,1,1,1" BorderBrush="{StaticResource BorderBrush}">
-                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Representative.Name}" Padding="2" Background="LightGreen">
-                                    <TextBlock.LayoutTransform>
+                                <Button Content="{Binding Name}" ToolTip="{Binding Representative.Name}"
+                                        Padding="2" Background="LightGreen"
+                                        Command="{Binding DataContext.StartSuggestion, RelativeSource={RelativeSource AncestorType=local:MainWindow}}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.LayoutTransform>
                                         <RotateTransform Angle="270"/>
-                                    </TextBlock.LayoutTransform>
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
+                                    </Button.LayoutTransform>
+                                    <Button.Style>
+                                        <Style TargetType="Button">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsTakingTurn}" Value="True">
                                                     <Setter Property="FontWeight" Value="Bold"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                                    </Button.Style>
+                                </Button>
                             </Border>
                         </Grid>
                     </DataTemplate>
@@ -74,19 +84,23 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
-                                                <TextBlock Text="{Binding Name}" Background="LightBlue" Padding="2">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsPartOfAccusation}" Value="True">
-                                                                    <Setter Property="Foreground" Value="Red"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
+                                                <Button Content="{Binding Name}" Background="LightBlue" Padding="2"
+                                                        Command="{Binding DataContext.SuggestCard, RelativeSource={RelativeSource AncestorType=local:MainWindow}}"
+                                                        CommandParameter="{Binding .}"/>
                                             </Border>
                                             <ItemsControl ItemsSource="{Binding Possibilities}" Grid.Column="1">
+                                                <ItemsControl.Style>
+                                                    <Style TargetType="ItemsControl">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPartOfAccusation}" Value="True">
+                                                                <Setter Property="Background" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsPartOfSuggestion}" Value="True">
+                                                                <Setter Property="Background" Value="Aqua"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ItemsControl.Style>
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel Orientation="Horizontal"/>

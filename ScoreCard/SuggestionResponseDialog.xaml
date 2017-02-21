@@ -9,7 +9,17 @@
         Title="Suggestion Response" Height="300" Width="300">
     <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" Text="{Binding Responder.Name, StringFormat='Response from {0}'}"/>
-        <UniformGrid DockPanel.Dock="Bottom" Columns="3">
+        <UniformGrid DockPanel.Dock="Bottom">
+            <UniformGrid.Style>
+                <Style TargetType="UniformGrid">
+                    <Setter Property="Columns" Value="2"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Cards.Count}" Value="0">
+                            <Setter Property="Columns" Value="3"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </UniformGrid.Style>
             <UniformGrid.Resources>
                 <Style TargetType="Button" x:Key="ResultButton">
                     <Setter Property="Margin" Value="5"/>
@@ -23,9 +33,10 @@
                     CommandParameter="{x:Static local:DialogResult.Maybe}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ResultButton}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Cards.Count}" Value="0">
-                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

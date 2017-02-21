@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using ClueHelper;
 using ClueHelper.Models;
@@ -50,12 +51,16 @@ namespace ScoreCard
             var currentTurnIndex = Solver.Game.Players.Select((player, i) => player.IsTakingTurn ? i : -1).Max();
             var playersToAsk = Solver.Game.Players.Skip(currentTurnIndex + 1)
                 .Concat(Solver.Game.Players.Take(currentTurnIndex))
-                .Where(player => !ReferenceEquals(player, Solver.MyPlayer))
                 .ToList();
 
             foreach (var player in playersToAsk)
             {
-                var vm = new DialogViewModel(player, _selectedCards);
+                if (ReferenceEquals(player, Solver.MyPlayer))
+                {
+                    MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
+                    continue;
+                }
+                var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
                 new SuggestionResponseDialog(vm).ShowDialog();
 
                 if (vm.Result == DialogResult.Card)
@@ -64,28 +69,37 @@ namespace ScoreCard
                     break;
                 }
 
-                switch (vm.Result)
+                if (vm.Result == DialogResult.Maybe)
                 {
-                    case DialogResult.Skip:
-                        break;
-                    case DialogResult.Maybe:
-                        Solver.PlayerMightHaveCards(player, vm.Cards);
-                        break;
-                    case DialogResult.None:
-                        Solver.PlayerDoesNotHaveCards(player, vm.Cards);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    Solver.PlayerMightHaveCards(player, _selectedCards);
+                    break;
+                }
+
+                if (vm.Result == DialogResult.Cancel)
+                {
+                    break;
+                }
+
+                if (vm.Result == DialogResult.None)
+                {
+                    Solver.PlayerDoesNotHaveCards(player, _selectedCards);
                 }
             }
-            
+
+            foreach (var card in _selectedCards)
+            {
+                card.IsPartOfSuggestion = false;
+            }
+            _selectedCards.Clear();
             Solver.Game.NextTurn();
             _state = State.None;
         }
 
         private bool CanMakeSuggestion()
         {
-            return State.BuildingSuggestion == _state && _selectedCards.Count == Config.CardsPerSuggestion && _selectedCards.Select(card => card.Category).Distinct().Count() == Config.CardsPerSuggestion;
+            return State.BuildingSuggestion == _state &&
+                _selectedCards.Count == Config.CardsPerSuggestion &&
+                _selectedCards.Select(card => card.Category).Distinct().Count() == Config.CardsPerSuggestion;
         }
 
         private void ToggleCardInSuggestion(Card card)
@@ -108,7 +122,9 @@ namespace ScoreCard
 
         private bool CanToggleCardInSuggestion(Card card)
         {
-            return State.BuildingSuggestion == _state;
+            return State.BuildingSuggestion == _state &&
+                (card.IsPartOfSuggestion || 
+                _selectedCards.All(selected => selected.Category != card.Category));
         }
 
         private void DoStartSuggestion(Player player)
@@ -122,7 +138,7 @@ namespace ScoreCard
 
         private bool CanStartSuggestion(Player player)
         {
-            return State.None == _state;
+            return State.None == _state && player.IsTakingTurn;
         }
     }
 }
