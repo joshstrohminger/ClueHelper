@@ -53,6 +53,8 @@ namespace ScoreCard
                 .Concat(Solver.Game.Players.Take(currentTurnIndex))
                 .ToList();
 
+            var stopped = false;
+
             foreach (var player in playersToAsk)
             {
                 if (ReferenceEquals(player, Solver.MyPlayer))
@@ -66,12 +68,14 @@ namespace ScoreCard
                 if (vm.Result == DialogResult.Card)
                 {
                     Solver.PlayerHasCard(player, vm.ResultCard);
+                    stopped = true;
                     break;
                 }
 
                 if (vm.Result == DialogResult.Maybe)
                 {
                     Solver.PlayerMightHaveCards(player, _selectedCards);
+                    stopped = true;
                     break;
                 }
 
@@ -84,6 +88,12 @@ namespace ScoreCard
                 {
                     Solver.PlayerDoesNotHaveCards(player, _selectedCards);
                 }
+            }
+
+            if (!stopped)
+            {
+                // todo, make inferences based on nobody having any of the cards
+                // todo, either the suggestor has some of them or they're part of the solution
             }
 
             foreach (var card in _selectedCards)
