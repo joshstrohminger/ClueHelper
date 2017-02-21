@@ -7,9 +7,6 @@ using ScoreCard.ViewModels;
 
 namespace ScoreCard.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
         private readonly IMainViewModel _vm;
@@ -17,13 +14,15 @@ namespace ScoreCard.Views
         public MainWindow()
         {
             InitializeComponent();
+            _vm = UseDefaultGame();
+            DataContext = _vm;
+        }
 
+        private static IMainViewModel UseDefaultGame()
+        {
             var game = Config.BuildDefaultGame();
             var me = game.Players.Last();
             var solver = new Solver(game, me);
-
-            _vm = new MainViewModel(solver);
-            DataContext = _vm;
 
             var random = new Random();
 
@@ -39,6 +38,8 @@ namespace ScoreCard.Views
             {
                 solver.PlayerHasCard(me, card);
             }
+
+            return new MainViewModel(solver);
         }
     }
 }
