@@ -8,7 +8,7 @@ namespace ClueHelper.Models
     public class Game : ObservableObject
     {
         public IReadOnlyCollection<Category> Categories { get; }
-        public IReadOnlyCollection<Player> Players { get; }
+        public ReadOnlyCollection<Player> Players { get; }
 
         private Game(IEnumerable<Category> categories, IEnumerable<Player> players)
         {

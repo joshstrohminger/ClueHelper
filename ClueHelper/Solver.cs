@@ -137,11 +137,62 @@ namespace ClueHelper
             }
         }
 
+        // make inferences based on nobody having any of the cards
+        // either the suggestor has some of them or they're part of the solution
+        // if the player who made the suggestion doesn't have some of cards they suggested,
+        // then those are part of the solution
+        public void SuggestionLooped(Player player, IEnumerable<Card> cards)
+        {
+            var accusationCards = cards.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding);
+            foreach (var card in accusationCards)
+            {
+                card.IsPartOfAccusation = true;
+
+                // mark each player as not holding this card
+                foreach (var poss in Possibilities[card].Values)
+                {
+                    poss.Possibility = Possibility.NotHolding;
+                }
+            }
+        }
+
         private void MakeInferences()
         {
-            // todo, check each category to see if we can mark something as known
-            // todo, check each player to see if we can mark one of the categories as known
-            // todo, go back through each player maybe history to see if we have new info that would allow us to mark something as known
+            // check each card to see if nobody has it and we can mark it as known
+            foreach (var cardPlayer in Possibilities
+                .Where(cardPlayer => !cardPlayer.Key.IsPartOfAccusation
+                && cardPlayer.Value.Values.All(p => p.Possibility == Possibility.NotHolding)))
+            {
+                cardPlayer.Key.IsPartOfAccusation = true;
+            }
+            
+            // go back through each player maybe history to see if we have new info that would allow us to mark something as known
+            foreach (var playerHistory in PlayerMaybeHistory)
+            {
+                var player = playerHistory.Key;
+
+                var historiesToRemove = new List<List<Card>>();
+
+                foreach (var maybe in playerHistory.Value)
+                {
+                    // narrow down the list by removing cards that we now know the player didn't have
+                    maybe.RemoveAll(card => Possibilities[card][player].Possibility == Possibility.NotHolding);
+                    if (maybe.Count == 0)
+                    {
+                        throw new GameException($"{player.Name} showed a card that we think they don't have.");
+                    }
+                    if (maybe.Count == 1)
+                    {
+                        historiesToRemove.Add(maybe);
+                    }
+                }
+
+                foreach (var maybe in historiesToRemove)
+                {
+                    playerHistory.Value.Remove(maybe);
+                    PlayerHasCard(player, maybe.First());
+                }
+            }
         }
 
         #region Helpers

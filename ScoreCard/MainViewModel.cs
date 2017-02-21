@@ -48,7 +48,12 @@ namespace ScoreCard
             _state = State.WaitingForResults;
 
             // todo, don't do this in this odd way of throwing a dialog from the viewmodel
-            var currentTurnIndex = Solver.Game.Players.Select((player, i) => player.IsTakingTurn ? i : -1).Max();
+            var playerTakingTurn = Solver.Game.Players.First(player => player.IsTakingTurn);
+            var currentTurnIndex = Solver.Game.Players.IndexOf(playerTakingTurn);
+            if (currentTurnIndex < 0)
+            {
+                throw new GameException("No player is taking a turn.");
+            }
             var playersToAsk = Solver.Game.Players.Skip(currentTurnIndex + 1)
                 .Concat(Solver.Game.Players.Take(currentTurnIndex))
                 .ToList();
@@ -81,8 +86,7 @@ namespace ScoreCard
 
             if (!stopped)
             {
-                // todo, make inferences based on nobody having any of the cards
-                // todo, either the suggestor has some of them or they're part of the solution
+                Solver.SuggestionLooped(playerTakingTurn, _selectedCards);
             }
 
             foreach (var card in _selectedCards)
