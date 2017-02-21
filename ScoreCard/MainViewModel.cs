@@ -44,13 +44,43 @@ namespace ScoreCard
                 return;
             }
 
-            var currentTurnIndex = Solver.Game.Players.Select((player, i) => player.IsTakingTurn ? i : -1).Max();
-            var playersToAsk = Solver.Game.Players.Skip(currentTurnIndex + 1)
-                .Concat(Solver.Game.Players.Take(currentTurnIndex)).ToList();
-
             _state = State.WaitingForResults;
 
+            // todo, don't do this in this odd way of throwing a dialog from the viewmodel
+            var currentTurnIndex = Solver.Game.Players.Select((player, i) => player.IsTakingTurn ? i : -1).Max();
+            var playersToAsk = Solver.Game.Players.Skip(currentTurnIndex + 1)
+                .Concat(Solver.Game.Players.Take(currentTurnIndex))
+                .Where(player => !ReferenceEquals(player, Solver.MyPlayer))
+                .ToList();
 
+            foreach (var player in playersToAsk)
+            {
+                var vm = new DialogViewModel(player, _selectedCards);
+                new SuggestionResponseDialog(vm).ShowDialog();
+
+                if (vm.Result == DialogResult.Card)
+                {
+                    Solver.PlayerHasCard(player, vm.ResultCard);
+                    break;
+                }
+
+                switch (vm.Result)
+                {
+                    case DialogResult.Skip:
+                        break;
+                    case DialogResult.Maybe:
+                        Solver.PlayerMightHaveCards(player, vm.Cards);
+                        break;
+                    case DialogResult.None:
+                        Solver.PlayerDoesNotHaveCards(player, vm.Cards);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            
+            Solver.Game.NextTurn();
+            _state = State.None;
         }
 
         private bool CanMakeSuggestion()

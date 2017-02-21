@@ -11,30 +11,31 @@
         <TextBlock DockPanel.Dock="Top" Text="{Binding Responder.Name, StringFormat='Response from {0}'}"/>
         <UniformGrid DockPanel.Dock="Bottom" Columns="3">
             <UniformGrid.Resources>
-                <Style TargetType="Button">
+                <Style TargetType="Button" x:Key="ResultButton">
                     <Setter Property="Margin" Value="5"/>
                 </Style>
             </UniformGrid.Resources>
-            <Button Content="None"
+            <Button Content="None" Style="{StaticResource ResultButton}"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
                     CommandParameter="{x:Static local:DialogResult.None}"/>
             <Button Content="Maybe"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
-                    CommandParameter="{x:Static local:DialogResult.Maybe}"/>
-            <Button Content="Skip"
+                    CommandParameter="{x:Static local:DialogResult.Maybe}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ResultButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Cards.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Content="Skip" Style="{StaticResource ResultButton}"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
                     CommandParameter="{x:Static local:DialogResult.Skip}"/>
         </UniformGrid>
         <ItemsControl ItemsSource="{Binding Cards}" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <ItemsControl.Style>
-                <Style TargetType="ItemsControl">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Cards.Count}" Value="0">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ItemsControl.Style>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"/>
