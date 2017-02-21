@@ -129,52 +129,99 @@
             </ItemsControl>
         </Grid>
         <Border BorderThickness="1,1,0,1" BorderBrush="{StaticResource BorderBrush}" Margin="5">
-            <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="Maybes"/>
-                            </Grid.ColumnDefinitions>
-                            <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource BorderBrush}">
-                                <DockPanel LastChildFill="True">
-                                    <TextBlock DockPanel.Dock="Top" Text="{Binding Key.Name}" Background="LightGray" Padding="5,2" TextAlignment="Center"/>
-                                    <ItemsControl ItemsSource="{Binding Value}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Vertical"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderBrush}">
-                                                    <ItemsControl ItemsSource="{Binding .}">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <StackPanel Orientation="Vertical"/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Padding="2,0" Text="{Binding Name}" HorizontalAlignment="Center"/>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </DockPanel>
-                            </Border>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DockPanel LastChildFill="True" Grid.IsSharedSizeScope="True">
+                    <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding Solver.PlayerLoopHistory}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="Maybes"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource BorderBrush}">
+                                        <ItemsControl ItemsSource="{Binding Value}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BorderBrush}">
+                                                        <ItemsControl ItemsSource="{Binding .}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel Orientation="Vertical"/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Padding="2,0" Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl ItemsSource="{Binding Solver.PlayerMaybeHistory}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="Maybes"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource BorderBrush}">
+                                        <DockPanel LastChildFill="True">
+                                            <TextBlock DockPanel.Dock="Top" Text="{Binding Key.Name}" Background="LightGray" Padding="5,2" TextAlignment="Center"/>
+                                            <ItemsControl ItemsSource="{Binding Value}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Vertical"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderBrush}">
+                                                            <ItemsControl ItemsSource="{Binding .}">
+                                                                <ItemsControl.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <StackPanel Orientation="Vertical"/>
+                                                                    </ItemsPanelTemplate>
+                                                                </ItemsControl.ItemsPanel>
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Padding="2,0" Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </DockPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DockPanel>
+            </ScrollViewer>
         </Border>
     </StackPanel>
 </Window>

@@ -40,6 +40,7 @@ namespace ScoreCard.DesignData
             Solver.PlayerHasCard(game.Players.First(), shuffledCards.Skip(cardsPerHand).First());
             Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(game.CardsPerSuggestion));
             Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
+            Solver.SuggestionLooped(game.Players.First(), shuffledCards.Skip(cardsPerHand + 2 * game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
 
             shuffledCards.Last().IsPartOfAccusation = true;
         }

@@ -82,7 +82,7 @@ namespace ClueHelper
         public void PlayerDoesNotHaveCards(Player player, IEnumerable<Card> cardsTheyDontHave)
         {
             ValidateInGame(player);
-            var cards = ValidateCardCount(cardsTheyDontHave);
+            var cards = ValidateCards(cardsTheyDontHave);
             foreach (var card in cards)
             {
                 if (player.Hand.Contains(card))
@@ -102,7 +102,7 @@ namespace ClueHelper
         public void PlayerMightHaveCards(Player player, IEnumerable<Card> cardsTheyMightHave)
         {
             ValidateInGame(player);
-            var cards = ValidateCardCount(cardsTheyMightHave);
+            var cards = ValidateCards(cardsTheyMightHave);
             foreach (var card in cards)
             {
                 ValidateInGame(card);
@@ -299,7 +299,7 @@ namespace ClueHelper
             }
         }
 
-        private Card[] ValidateCardCount(IEnumerable<Card> cards)
+        private Card[] ValidateCards(IEnumerable<Card> cards)
         {
             if (null == cards)
             {
@@ -307,11 +307,6 @@ namespace ClueHelper
             }
 
             var cardsToCheck = cards.ToArray();
-
-            if (cardsToCheck.Length != Game.CardsPerSuggestion)
-            {
-                throw new ArgumentException($"Hands must contain {Game.CardsPerSuggestion} cards.");
-            }
 
             foreach (var card in cardsToCheck)
             {
