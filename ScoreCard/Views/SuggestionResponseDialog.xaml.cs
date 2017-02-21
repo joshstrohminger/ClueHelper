@@ -1,7 +1,8 @@
-﻿using System;
-using ClueHelper.Models;
+﻿using ClueHelper.Models;
+using ScoreCard.Interfaces;
+using ScoreCard.MVVM;
 
-namespace ScoreCard
+namespace ScoreCard.Views
 {
     /// <summary>
     /// Interaction logic for SuggestionResponseDialog.xaml
@@ -25,7 +26,7 @@ namespace ScoreCard
 
         private void DoCloseWithCard(Card card)
         {
-            _vm.Result = ScoreCard.DialogResult.Card;
+            _vm.Result = Interfaces.DialogResult.Card;
             _vm.ResultCard = card;
             Close();
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ClueHelper.Models;
 
-namespace ScoreCard
+namespace ScoreCard.Interfaces
 {
     public enum DialogResult
     {

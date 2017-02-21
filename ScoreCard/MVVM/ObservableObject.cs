@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ScoreCard
+namespace ScoreCard.MVVM
 {
     public class ObservableObject : INotifyPropertyChanged
     {

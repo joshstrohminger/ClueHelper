@@ -2,8 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using ClueHelper.Models;
+using ScoreCard.Interfaces;
 
-namespace ScoreCard
+namespace ScoreCard.DesignData
 {
     public class DialogViewModelDesignData : IDialogViewModel
     {

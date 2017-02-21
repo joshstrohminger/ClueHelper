@@ -1,11 +1,13 @@
-﻿<Window x:Class="ScoreCard.SuggestionResponseDialog"
+﻿<Window x:Class="ScoreCard.Views.SuggestionResponseDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ScoreCard"
+        xmlns:local="clr-namespace:ScoreCard.Views"
+        xmlns:designData="clr-namespace:ScoreCard.DesignData"
+        xmlns:interfaces="clr-namespace:ScoreCard.Interfaces"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:DialogViewModelDesignData, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=designData:DialogViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Suggestion Response" Height="300" Width="300">
     <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" Text="{Binding Responder.Name, StringFormat='Response from {0}'}" Margin="10" HorizontalAlignment="Center" FontSize="20"/>
@@ -28,10 +30,10 @@
             </UniformGrid.Resources>
             <Button Content="None" Style="{StaticResource ResultButton}"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
-                    CommandParameter="{x:Static local:DialogResult.None}"/>
+                    CommandParameter="{x:Static interfaces:DialogResult.None}"/>
             <Button Content="Maybe"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
-                    CommandParameter="{x:Static local:DialogResult.Maybe}">
+                    CommandParameter="{x:Static interfaces:DialogResult.Maybe}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ResultButton}">
                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -45,7 +47,7 @@
             </Button>
             <Button Content="Skip" Style="{StaticResource ResultButton}"
                     Command="{Binding CloseWithResult, RelativeSource={RelativeSource AncestorType=local:SuggestionResponseDialog}}"
-                    CommandParameter="{x:Static local:DialogResult.Skip}"/>
+                    CommandParameter="{x:Static interfaces:DialogResult.Skip}"/>
         </UniformGrid>
         <ItemsControl ItemsSource="{Binding Cards}" VerticalAlignment="Center" HorizontalAlignment="Center">
             <ItemsControl.ItemsPanel>

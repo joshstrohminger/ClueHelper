@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using ClueHelper.Models;
 
-namespace ScoreCard
+namespace ScoreCard.Views
 {
     [ValueConversion(typeof(Possibility), typeof(string))]
     public class PossibilityConverter : IValueConverter

@@ -1,12 +1,13 @@
-﻿<Window x:Class="ScoreCard.MainWindow"
+﻿<Window x:Class="ScoreCard.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ScoreCard"
+        xmlns:local="clr-namespace:ScoreCard.Views"
         xmlns:models="clr-namespace:ClueHelper.Models;assembly=ClueHelper"
+        xmlns:designData="clr-namespace:ScoreCard.DesignData"
         mc:Ignorable="d" WindowState="Maximized"
-        d:DataContext="{d:DesignInstance Type=local:MainViewModelDesignData, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=designData:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Score Card" Height="350" Width="700">
     <Window.Resources>
         <local:PossibilityConverter x:Key="PossibilityConverter"/>

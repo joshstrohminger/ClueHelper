@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ScoreCard.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -56,19 +59,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DialogViewModel.cs" />
-    <Compile Include="DialogViewModelDesignData.cs" />
-    <Compile Include="IDialogViewModel.cs" />
-    <Compile Include="IMainViewModel.cs" />
-    <Compile Include="MainViewModelDesignData.cs" />
-    <Compile Include="PossibilityConverter.cs" />
-    <Compile Include="RelayCommand.cs" />
-    <Compile Include="MainViewModel.cs" />
-    <Compile Include="ObservableObject.cs" />
-    <Compile Include="SuggestionResponseDialog.xaml.cs">
+    <Compile Include="ViewModels\DialogViewModel.cs" />
+    <Compile Include="DesignData\DialogViewModelDesignData.cs" />
+    <Compile Include="Interfaces\IDialogViewModel.cs" />
+    <Compile Include="Interfaces\IMainViewModel.cs" />
+    <Compile Include="DesignData\MainViewModelDesignData.cs" />
+    <Compile Include="Views\PossibilityConverter.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="MVVM\ObservableObject.cs" />
+    <Compile Include="Views\SuggestionResponseDialog.xaml.cs">
       <DependentUpon>SuggestionResponseDialog.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -76,11 +79,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SuggestionResponseDialog.xaml">
+    <Page Include="Views\SuggestionResponseDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -118,6 +121,7 @@
       <Name>ClueHelper</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -13,6 +13,7 @@ namespace ClueHelper
 
         public IReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>> Possibilities { get; }
         public IReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>> PlayerMaybeHistory { get; }
+        public IReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>> PlayerLoopHistory { get; }
 
         public Solver(Game game, Player playAs)
         {
@@ -50,6 +51,9 @@ namespace ClueHelper
                             possibility => possibility)));
 
             PlayerMaybeHistory = new ReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>>(
+                Game.Players.ToDictionary(player => player, player => new ObservableCollection<ObservableCollection<Card>>()));
+
+            PlayerLoopHistory = new ReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>>(
                 Game.Players.ToDictionary(player => player, player => new ObservableCollection<ObservableCollection<Card>>()));
         }
 
@@ -144,38 +148,92 @@ namespace ClueHelper
         // either the suggestor has some of them or they're part of the solution
         // if the player who made the suggestion doesn't have some of cards they suggested,
         // then those are part of the solution
+        // if we don't know anything about the suggestor's status for the cards then we need to remember them to check later, just like we do with the maybe history
         public void SuggestionLooped(Player player, IEnumerable<Card> cards)
         {
-            var accusationCards = cards.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding);
-            foreach (var card in accusationCards)
+            // mark cards they don't have as accusations
+            MarkCardsAsAccusations(cards.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding));
+
+            // mark cards we don't know enough about as maybe and save for later
+            var unknownCards = cards.Where(card => Possibilities[card][player].Possibility <= Possibility.Maybe).ToList();
+            var history = PlayerLoopHistory[player];
+            // only add unique lists
+            if (history.All(list => !list.SequenceEqual(unknownCards)))
+            {
+                // leave each card with its status of unkown or maybe, we'll only mark them off as we learn more about them
+                history.Add(new ObservableCollection<Card>(unknownCards));
+            }
+        }
+
+        private void MarkCardsAsAccusations(IEnumerable<Card> cards)
+        {
+            foreach (var card in cards)
             {
                 card.IsPartOfAccusation = true;
 
                 // mark each player as not holding this card
                 foreach (var poss in Possibilities[card].Values)
                 {
-                    poss.Possibility = Possibility.NotHolding;
+                    PlayerDoesNotHaveCards(poss.Player, new [] {card});
                 }
             }
-
-            MakeInferences();
         }
 
         private void MakeInferences()
         {
-            // check each card to see if nobody has it and we can mark it as known
-            foreach (var cardPlayer in Possibilities
-                .Where(cardPlayer => !cardPlayer.Key.IsPartOfAccusation
-                && cardPlayer.Value.Values.All(p => p.Possibility == Possibility.NotHolding)))
+            CheckIfNobodyHasHoldsEachCard();
+            CheckIfMaybeHistoryCanBeUpdated();
+            CheckIfLoopHistoryCanBeUpdated();
+        }
+
+        // go back through each player loop history to see if we have new info that would allow us to mark soemthing as an accusation
+        // if a card is in someone's hand, simply remove it from the loop
+        // if a card is not in someone's hand, it's an accusation
+        private void CheckIfLoopHistoryCanBeUpdated()
+        {
+            foreach (var loopHistory in PlayerLoopHistory)
             {
-                cardPlayer.Key.IsPartOfAccusation = true;
+                var player = loopHistory.Key;
+                var historiesToRemove = new List<ObservableCollection<Card>>();
+                var accusations = new List<Card>();
+
+                foreach (var loop in loopHistory.Value)
+                {
+                    var holding = loop.Where(card => Possibilities[card][player].Possibility == Possibility.Holding).ToList();
+                    foreach (var card in holding)
+                    {
+                        loop.Remove(card);
+                    }
+
+                    var notHolding = loop.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding).ToList();
+                    foreach (var card in notHolding)
+                    {
+                        accusations.Add(card);
+                        loop.Remove(card);
+                    }
+
+                    if (loop.Count == 0)
+                    {
+                        historiesToRemove.Add(loop);
+                    }
+                }
+
+                foreach (var loop in historiesToRemove)
+                {
+                    loopHistory.Value.Remove(loop);
+                }
+
+                MarkCardsAsAccusations(accusations);
             }
-            
-            // go back through each player maybe history to see if we have new info that would allow us to mark something as known
+        }
+
+        // go back through each player maybe history to see if we have new info that would allow us to mark something as known
+        // something must have been held by the player if it's the only one left that could be in their hand
+        private void CheckIfMaybeHistoryCanBeUpdated()
+        {
             foreach (var playerHistory in PlayerMaybeHistory)
             {
                 var player = playerHistory.Key;
-
                 var historiesToRemove = new List<ObservableCollection<Card>>();
 
                 foreach (var maybe in playerHistory.Value)
@@ -201,6 +259,17 @@ namespace ClueHelper
                     playerHistory.Value.Remove(maybe);
                     PlayerHasCard(player, maybe.First());
                 }
+            }
+        }
+
+        // check each card to see if nobody has it and we can mark it as known
+        private void CheckIfNobodyHasHoldsEachCard()
+        {
+            foreach (var cardPlayer in Possibilities
+                .Where(cardPlayer => !cardPlayer.Key.IsPartOfAccusation
+                                     && cardPlayer.Value.Values.All(p => p.Possibility == Possibility.NotHolding)))
+            {
+                cardPlayer.Key.IsPartOfAccusation = true;
             }
         }
 

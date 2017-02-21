@@ -3,8 +3,10 @@ using System.Linq;
 using System.Windows.Input;
 using ClueHelper;
 using ClueHelper.Models;
+using ScoreCard.Interfaces;
+using ScoreCard.MVVM;
 
-namespace ScoreCard
+namespace ScoreCard.DesignData
 {
     public class MainViewModelDesignData : IMainViewModel
     {

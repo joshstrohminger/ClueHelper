@@ -2,8 +2,10 @@
 using System.Linq;
 using ClueHelper;
 using ClueHelper.Models;
+using ScoreCard.Interfaces;
+using ScoreCard.ViewModels;
 
-namespace ScoreCard
+namespace ScoreCard.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

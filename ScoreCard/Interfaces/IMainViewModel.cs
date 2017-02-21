@@ -1,8 +1,9 @@
 ﻿using System.Windows.Input;
 using ClueHelper;
 using ClueHelper.Models;
+using ScoreCard.MVVM;
 
-namespace ScoreCard
+namespace ScoreCard.Interfaces
 {
     public interface IMainViewModel
     {

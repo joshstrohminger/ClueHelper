@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace ScoreCard
+namespace ScoreCard.MVVM
 {
     #region RelayCommand
     public class RelayCommand<T> : ICommand

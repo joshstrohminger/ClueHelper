@@ -5,8 +5,11 @@ using System.Windows;
 using System.Windows.Input;
 using ClueHelper;
 using ClueHelper.Models;
+using ScoreCard.Interfaces;
+using ScoreCard.MVVM;
+using ObservableObject = ScoreCard.MVVM.ObservableObject;
 
-namespace ScoreCard
+namespace ScoreCard.ViewModels
 {
     public enum State
     {
@@ -108,10 +111,10 @@ namespace ScoreCard
                     stopped = true;
                     return false;
                 }
-                return false;
+                return true;
             }
             var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
-            new SuggestionResponseDialog(vm).ShowDialog();
+            new Views.SuggestionResponseDialog(vm).ShowDialog();
 
             switch (vm.Result)
             {
