@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using ScoreCard.Interfaces;
 
 namespace ScoreCard.Views
@@ -18,7 +8,7 @@ namespace ScoreCard.Views
     /// <summary>
     /// Interaction logic for GameBuilderDialog.xaml
     /// </summary>
-    public partial class GameBuilderDialog : Window
+    public partial class GameBuilderDialog
     {
         private readonly IGameBuilderViewModel _vm;
 
@@ -28,11 +18,24 @@ namespace ScoreCard.Views
 
             _vm = vm;
             DataContext = _vm;
+            _vm.GameBuilt += GameBuilt;
+        }
+
+        private void GameBuilt(object sender, EventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _vm.GameBuilt -= GameBuilt;
+            base.OnClosing(e);
         }
     }
 }

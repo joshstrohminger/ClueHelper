@@ -19,16 +19,17 @@ namespace ScoreCard.ViewModels
         public RelayCommand<PotentialPlayer> RemovePlayer { get; }
         public ObservableCollection<PotentialPlayer> Players { get; } = new ObservableCollection<PotentialPlayer>();
         public ICommand Build { get; }
+        public ReadOnlyCollection<Card> Pieces { get; }
         public Game GameResult { get; private set; }
 
-        public ReadOnlyCollection<Card> Pieces { get; }
+        public event EventHandler GameBuilt;
 
         public GameBuilderViewModel()
         {
             _people = Config.BuildDefaultPeople();
             _defaultCard = new Card(_people, "Choose a piece...");
             Pieces = new ReadOnlyCollection<Card>(new [] {_defaultCard}.Concat(_people.Cards).ToList());
-            AddPlayer = new RelayCommand(() => Players.Add(new PotentialPlayer() {Piece = _defaultCard}));
+            AddPlayer = new RelayCommand(() => Players.Add(new PotentialPlayer {Piece = _defaultCard}));
             RemovePlayer = new RelayCommand<PotentialPlayer>(player => Players.Remove(player));
             Build = new RelayCommand(BuildGame, CanBuildGame);
         }
@@ -56,6 +57,7 @@ namespace ScoreCard.ViewModels
             }
 
             GameResult = builder.Build();
+            GameBuilt?.Invoke(this, new EventArgs());
         }
     }
 }

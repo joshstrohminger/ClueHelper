@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ClueHelper.Models;
@@ -15,5 +15,6 @@ namespace ScoreCard.Interfaces
         ICommand Build { get; }
         ReadOnlyCollection<Card> Pieces { get; }
         Game GameResult { get; }
+        event EventHandler GameBuilt;
     }
 }

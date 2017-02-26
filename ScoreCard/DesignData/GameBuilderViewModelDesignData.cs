@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -16,7 +16,6 @@ namespace ScoreCard.DesignData
         public RelayCommand<PotentialPlayer> RemovePlayer { get; } = new RelayCommand<PotentialPlayer>(o => {});
         public ObservableCollection<PotentialPlayer> Players { get; } = new ObservableCollection<PotentialPlayer>();
         public ReadOnlyCollection<Card> Pieces { get; }
-        public Game GameResult { get; }
         public ICommand Build { get; } = new RelayCommand(() => {});
 
         public GameBuilderViewModelDesignData()
@@ -26,6 +25,10 @@ namespace ScoreCard.DesignData
 
             Players.Add(new PotentialPlayer {Name = "Josh"});
             Players.Add(new PotentialPlayer { Name = "Frank", Piece = Pieces.First()});
+            GameBuilt?.Invoke(this, new EventArgs());
         }
+
+        public Game GameResult { get; } = null;
+        public event EventHandler GameBuilt;
     }
 }

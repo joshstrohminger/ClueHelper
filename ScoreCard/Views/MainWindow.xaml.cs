@@ -15,7 +15,7 @@ namespace ScoreCard.Views
         {
             InitializeComponent();
 
-            var result = MessageBox.Show("Build Test Game?", "Build Test Game Now?", MessageBoxButton.YesNo,
+            var result = MessageBox.Show("Do you want play the test game?", "Play Test Game?", MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             _vm = result == MessageBoxResult.Yes ? UseDefaultGame() : BuildGame();
 

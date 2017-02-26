@@ -8,7 +8,7 @@
         xmlns:designData="clr-namespace:ScoreCard.DesignData"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=designData:GameBuilderViewModelDesignData, IsDesignTimeCreatable=True}"
-        Title="Game Builder" Height="300" Width="300">
+        Title="Game Builder" Height="220" Width="300">
     <DockPanel LastChildFill="True">
         <UniformGrid Columns="2" DockPanel.Dock="Bottom">
             <Button Content="Build" Command="{Binding Build}"/>
