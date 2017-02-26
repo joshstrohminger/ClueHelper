@@ -1,11 +1,12 @@
-﻿using ScoreCard.MVVM;
+﻿using ClueHelper.Models;
+using ObservableObject = ScoreCard.MVVM.ObservableObject;
 
 namespace ScoreCard.Models
 {
     public class PotentialPlayer : ObservableObject
     {
         private string _name;
-        private string _piece;
+        private Card _piece;
         private bool _me;
 
         public string Name
@@ -18,7 +19,7 @@ namespace ScoreCard.Models
             }
         }
 
-        public string Piece
+        public Card Piece
         {
             get { return _piece; }
             set

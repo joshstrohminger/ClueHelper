@@ -29,5 +29,10 @@ namespace ScoreCard.Views
             _vm = vm;
             DataContext = _vm;
         }
+
+        private void Close_OnClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

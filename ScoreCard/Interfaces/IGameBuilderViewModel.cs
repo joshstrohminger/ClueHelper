@@ -12,8 +12,8 @@ namespace ScoreCard.Interfaces
         ICommand AddPlayer { get; }
         RelayCommand<PotentialPlayer> RemovePlayer { get; }
         ObservableCollection<PotentialPlayer> Players { get; }
-        void Build();
-        ReadOnlyCollection<string> Pieces { get; }
+        ICommand Build { get; }
+        ReadOnlyCollection<Card> Pieces { get; }
         Game GameResult { get; }
     }
 }
