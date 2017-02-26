@@ -35,7 +35,7 @@ namespace ScoreCard.ViewModels
 
         private readonly SuggestionManager _suggestionManager;
 
-        public event EventHandler<IDialogViewModel> PromptForSuggestionResult
+        public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult
         {
             add { _suggestionManager.PromptForSuggestionResult += value; }
             remove { _suggestionManager.PromptForSuggestionResult -= value; }
@@ -50,7 +50,7 @@ namespace ScoreCard.ViewModels
             SuggestCard = new RelayCommand<Card>(ToggleCardInSuggestion, CanToggleCardInSuggestion);
         }
 
-        public void ProvideSuggestionResult(IDialogViewModel vm)
+        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
         {
             if (_state != State.WaitingForResults)
             {

@@ -10,7 +10,7 @@ namespace ScoreCard.ViewModels
 {
     public class SuggestionManager
     {
-        private IDialogViewModel _currentAsk;
+        private ISuggestionResponseViewModel _currentAsk;
         private bool _stopped;
         private Queue<Player> _playersToAsk;
         private readonly Solver _solver;
@@ -21,12 +21,12 @@ namespace ScoreCard.ViewModels
             _solver = solver;
         }
 
-        public event EventHandler<IDialogViewModel> PromptForSuggestionResult;
+        public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
 
         public bool IsDoneAsking => (_playersToAsk?.Count ?? 0) == 0;
         public Player PlayerTakingTurn { get; private set; }
 
-        public void ProvideSuggestionResult(IDialogViewModel vm)
+        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
         {
             if (!ReferenceEquals(vm, _currentAsk))
             {
@@ -105,7 +105,7 @@ namespace ScoreCard.ViewModels
                 CheckIfLoopShouldContinue(true, keepGoing);
                 return;
             }
-            _currentAsk = new DialogViewModel(player, _solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
+            _currentAsk = new SuggestionResponseViewModel(player, _solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
             PromptForSuggestionResult?.Invoke(this, _currentAsk);
         }
 

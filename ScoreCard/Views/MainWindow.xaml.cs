@@ -24,10 +24,14 @@ namespace ScoreCard.Views
             _vm.PromptForSuggestionResult += PromptForSuggestionResult;
         }
 
-        private void PromptForSuggestionResult(object sender, IDialogViewModel dialogViewModel)
+        private void PromptForSuggestionResult(object sender, ISuggestionResponseViewModel suggestionResponseViewModel)
         {
-            new SuggestionResponseDialog(dialogViewModel) {Owner = this, WindowStartupLocation = WindowStartupLocation.CenterOwner}.ShowDialog();
-            _vm.ProvideSuggestionResult(dialogViewModel);
+            new SuggestionResponseDialog(suggestionResponseViewModel)
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            }.ShowDialog();
+            _vm.ProvideSuggestionResult(suggestionResponseViewModel);
         }
 
         private static IMainViewModel BuildGame()
@@ -43,7 +47,17 @@ namespace ScoreCard.Views
             var me = game.Players.First(player => player.Name == myName);
             var solver = new Solver(game, me);
 
-            // todo, need to figure out how to let the user select the cards they were dealt
+            var cardsPerPlayer = (game.Categories.SelectMany(c => c.Cards).Count() - game.CardsPerSuggestion) / (double)game.Players.Count;
+            var selectCardsViewModel = new SelectCardsViewModel(game.Categories, (int)Math.Floor(cardsPerPlayer), (int)Math.Ceiling(cardsPerPlayer));
+            if (false == new SelectCardsDialog(selectCardsViewModel).ShowDialog())
+            {
+                return UseDefaultGame();
+            }
+            foreach (var card in game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion))
+            {
+                solver.PlayerHasCard(me, card);
+                card.IsPartOfSuggestion = false;
+            }
             return new MainViewModel(solver);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -21,6 +22,7 @@ namespace ScoreCard.DesignData
         public GameBuilderViewModelDesignData()
         {
             var people = Config.BuildDefaultPeople();
+
             Pieces = new ReadOnlyCollection<Card>(people.Cards.ToList());
 
             Players.Add(new PotentialPlayer {Name = "Josh"});

@@ -15,11 +15,11 @@ namespace ScoreCard.DesignData
         public ICommand MakeSuggestion { get; } = new RelayCommand(() => { });
         public RelayCommand<Card> SuggestCard { get; } = new RelayCommand<Card>(x => { });
 
-        public event EventHandler<IDialogViewModel> PromptForSuggestionResult;
+        public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
 
-        public void ProvideSuggestionResult(IDialogViewModel vm)
+        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
         {
-            throw new NotImplementedException();
+            PromptForSuggestionResult?.Invoke(this, null);
         }
 
         public MainViewModelDesignData()

@@ -12,7 +12,7 @@ namespace ScoreCard.Interfaces
         RelayCommand<Player> StartSuggestion { get; }
         ICommand MakeSuggestion { get; }
         RelayCommand<Card> SuggestCard { get; }
-        event EventHandler<IDialogViewModel> PromptForSuggestionResult;
-        void ProvideSuggestionResult(IDialogViewModel vm);
+        event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
+        void ProvideSuggestionResult(ISuggestionResponseViewModel vm);
     }
 }

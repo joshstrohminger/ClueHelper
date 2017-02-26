@@ -7,7 +7,7 @@
         xmlns:designData="clr-namespace:ScoreCard.DesignData"
         xmlns:interfaces="clr-namespace:ScoreCard.Interfaces"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=designData:DialogViewModelDesignData, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=designData:SuggestionResponseViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Suggestion Response" Height="300" Width="300">
     <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" Text="{Binding Responder.Name, StringFormat='Response from {0}'}" Margin="10" HorizontalAlignment="Center" FontSize="20"/>

@@ -6,14 +6,14 @@ using ScoreCard.Interfaces;
 
 namespace ScoreCard.ViewModels
 {
-    public class DialogViewModel : IDialogViewModel
+    public class SuggestionResponseViewModel : ISuggestionResponseViewModel
     {
         public Player Responder { get; }
         public IReadOnlyCollection<Card> Cards { get; }
         public DialogResult Result { get; set; }
         public Card ResultCard { get; set; }
 
-        public DialogViewModel(Player responder, IEnumerable<Card> cards)
+        public SuggestionResponseViewModel(Player responder, IEnumerable<Card> cards)
         {
             Responder = responder;
             Cards = new ReadOnlyCollection<Card>(cards.ToList());

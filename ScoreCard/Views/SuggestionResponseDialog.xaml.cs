@@ -9,12 +9,12 @@ namespace ScoreCard.Views
     /// </summary>
     public partial class SuggestionResponseDialog
     {
-        private readonly IDialogViewModel _vm;
+        private readonly ISuggestionResponseViewModel _vm;
 
         public RelayCommand<DialogResult> CloseWithResult { get; }
         public RelayCommand<Card> CloseWithCard { get; }
 
-        public SuggestionResponseDialog(IDialogViewModel vm)
+        public SuggestionResponseDialog(ISuggestionResponseViewModel vm)
         {
             InitializeComponent();
 
