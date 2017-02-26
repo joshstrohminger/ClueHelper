@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using ClueHelper;
@@ -20,6 +21,13 @@ namespace ScoreCard.Views
             _vm = result == MessageBoxResult.Yes ? UseDefaultGame() : BuildGame();
 
             DataContext = _vm;
+            _vm.PromptForSuggestionResult += PromptForSuggestionResult;
+        }
+
+        private void PromptForSuggestionResult(object sender, IDialogViewModel dialogViewModel)
+        {
+            new SuggestionResponseDialog(dialogViewModel) {Owner = this, WindowStartupLocation = WindowStartupLocation.CenterOwner}.ShowDialog();
+            _vm.ProvideSuggestionResult(dialogViewModel);
         }
 
         private static IMainViewModel BuildGame()
@@ -61,6 +69,12 @@ namespace ScoreCard.Views
             }
 
             return new MainViewModel(solver);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _vm.PromptForSuggestionResult -= PromptForSuggestionResult;
+            base.OnClosing(e);
         }
     }
 }

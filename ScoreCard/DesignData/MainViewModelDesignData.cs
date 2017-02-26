@@ -15,6 +15,13 @@ namespace ScoreCard.DesignData
         public ICommand MakeSuggestion { get; } = new RelayCommand(() => { });
         public RelayCommand<Card> SuggestCard { get; } = new RelayCommand<Card>(x => { });
 
+        public event EventHandler<IDialogViewModel> PromptForSuggestionResult;
+
+        public void ProvideSuggestionResult(IDialogViewModel vm)
+        {
+            throw new NotImplementedException();
+        }
+
         public MainViewModelDesignData()
         {
             var game = Config.BuildDefaultGame();
