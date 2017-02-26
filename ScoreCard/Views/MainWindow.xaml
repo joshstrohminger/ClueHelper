@@ -147,7 +147,7 @@
                                         <ItemsControl ItemsSource="{Binding Value}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical"/>
+                                                    <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
