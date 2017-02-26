@@ -92,12 +92,17 @@ namespace ScoreCard.ViewModels
                 Solver.SuggestionLooped(playerTakingTurn, _selectedCards);
             }
 
+            ClearSuggestion(playerTakingTurn);
+        }
+
+        private void ClearSuggestion(Player player)
+        {
             foreach (var card in _selectedCards)
             {
                 card.IsPartOfSuggestion = false;
             }
             _selectedCards.Clear();
-            Solver.Game.NextTurn();
+            player.IsTakingTurn = false;
             _state = State.None;
         }
 
@@ -176,12 +181,20 @@ namespace ScoreCard.ViewModels
             {
                 return;
             }
-            _state = State.BuildingSuggestion;
+            if (player.IsTakingTurn)
+            {
+                ClearSuggestion(player);
+            }
+            else
+            {
+                _state = State.BuildingSuggestion;
+                player.IsTakingTurn = true;
+            }
         }
 
         private bool CanStartSuggestion(Player player)
         {
-            return State.None == _state && player.IsTakingTurn;
+            return State.None == _state || player.IsTakingTurn;
         }
     }
 }
