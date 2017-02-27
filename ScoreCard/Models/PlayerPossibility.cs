@@ -23,8 +23,11 @@ namespace ScoreCard.Models
             get { return _possibility;}
             set
             {
-                _possibility = value;
-                OnPropertyChanged();
+                if (value != _possibility)
+                {
+                    _possibility = value;
+                    OnPropertyChanged();
+                }
             }
         }
 

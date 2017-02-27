@@ -2,7 +2,10 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using ScoreCard.Interfaces;
+using ScoreCard.Models;
 using ScoreCard.ViewModels;
 
 namespace ScoreCard.Views
@@ -57,7 +60,13 @@ namespace ScoreCard.Views
                 solver.PlayerHasCard(me, card);
                 card.IsPartOfSuggestion = false;
             }
-            return new MainViewModel(solver);
+            var vm = new MainViewModel(solver);
+            foreach (
+                var p in solver.Possibilities.Values.SelectMany(x => x.Values).Where(x => x.Possibility == Possibility.Holding))
+            {
+                vm.Changes.Add(new PossibilityChange(p, Possibility.Unknown, p.Possibility, "Dealt card", null, null, DateTime.Now));   
+            }
+            return vm;
         }
 
         private static IMainViewModel UseDefaultGame()
@@ -81,13 +90,42 @@ namespace ScoreCard.Views
                 solver.PlayerHasCard(me, card);
             }
 
-            return new MainViewModel(solver);
+            var vm = new MainViewModel(solver);
+            foreach (
+                var p in solver.Possibilities.Values.SelectMany(x => x.Values).Where(x => x.Possibility == Possibility.Holding))
+            {
+                vm.Changes.Add(new PossibilityChange(p, Possibility.Unknown, p.Possibility, "Dealt card", null, null, DateTime.Now));
+            }
+            return vm;
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             _vm.PromptForSuggestionResult -= PromptForSuggestionResult;
             base.OnClosing(e);
+        }
+
+        private void HightlightItem(object sender, bool highlight)
+        {
+            var element = sender as FrameworkElement;
+            var possibility = element?.DataContext as PlayerPossibility ??
+                              (element?.DataContext as PossibilityChange)?.Possibility;
+            if (possibility == null || possibility.Possibility == Possibility.Unknown)
+            {
+                return;
+            }
+
+            possibility.IsHighlighted = highlight;
+        }
+
+        private void HighlightedItem_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            HightlightItem(sender, true);
+        }
+
+        private void HighlightedItem_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            HightlightItem(sender, false);
         }
     }
 }
