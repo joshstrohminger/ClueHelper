@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using ScoreCard.Interfaces;
+using ScoreCard.Models;
 using ScoreCard.ViewModels;
 
 namespace ScoreCard.Views
@@ -54,7 +56,7 @@ namespace ScoreCard.Views
             }
             foreach (var card in game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion))
             {
-                solver.PlayerHasCard(me, card);
+                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
                 card.IsPartOfSuggestion = false;
             }
             return new MainViewModel(solver);
@@ -78,9 +80,8 @@ namespace ScoreCard.Views
 
             foreach (var card in shuffledCards.Take(cardsPerHand))
             {
-                solver.PlayerHasCard(me, card);
+                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
             }
-
             return new MainViewModel(solver);
         }
 
@@ -88,6 +89,29 @@ namespace ScoreCard.Views
         {
             _vm.PromptForSuggestionResult -= PromptForSuggestionResult;
             base.OnClosing(e);
+        }
+
+        private void HightlightItem(object sender, bool highlight)
+        {
+            var element = sender as FrameworkElement;
+            var possibility = element?.DataContext as PlayerPossibility ??
+                              (element?.DataContext as PossibilityChange)?.Possibility;
+            if (possibility == null || possibility.Possibility == Possibility.Unknown)
+            {
+                return;
+            }
+
+            possibility.IsHighlighted = highlight;
+        }
+
+        private void HighlightedItem_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            HightlightItem(sender, true);
+        }
+
+        private void HighlightedItem_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            HightlightItem(sender, false);
         }
     }
 }

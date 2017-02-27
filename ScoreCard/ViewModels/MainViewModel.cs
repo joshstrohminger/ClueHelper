@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
 using ScoreCard.MVVM;
-using ObservableObject = ScoreCard.MVVM.ObservableObject;
 
 namespace ScoreCard.ViewModels
 {
@@ -18,9 +18,13 @@ namespace ScoreCard.ViewModels
 
     public class MainViewModel : ObservableObject, IMainViewModel
     {
+        #region Fields
 
         private State _state;
         private readonly IList<Card> _selectedCards = new List<Card>();
+        private readonly SuggestionManager _suggestionManager;
+
+        #endregion Fields
 
         #region Properties
 
@@ -28,16 +32,15 @@ namespace ScoreCard.ViewModels
         public RelayCommand<Player> StartSuggestion { get; }
         public ICommand MakeSuggestion { get; }
         public RelayCommand<Card> SuggestCard { get; }
-
-        #endregion Properties
-
-        private readonly SuggestionManager _suggestionManager;
-
         public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult
         {
             add { _suggestionManager.PromptForSuggestionResult += value; }
             remove { _suggestionManager.PromptForSuggestionResult -= value; }
         }
+
+        #endregion Properties
+
+        #region Public
 
         public MainViewModel(Solver solver)
         {
@@ -61,6 +64,10 @@ namespace ScoreCard.ViewModels
                 ClearSuggestion(_suggestionManager.PlayerTakingTurn);
             }
         }
+
+        #endregion Public
+
+        #region Private
 
         private void DoMakeSuggestion()
         {
@@ -153,5 +160,7 @@ namespace ScoreCard.ViewModels
         {
             return State.None == _state || player.IsTakingTurn;
         }
+
+        #endregion Private
     }
 }

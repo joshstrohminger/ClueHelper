@@ -4,15 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScoreCard.Views"
-        xmlns:models="clr-namespace:ScoreCard.Models"
         xmlns:designData="clr-namespace:ScoreCard.DesignData"
         xmlns:models1="clr-namespace:ScoreCard.Models"
         mc:Ignorable="d" WindowState="Maximized"
         d:DataContext="{d:DesignInstance Type=designData:MainViewModelDesignData, IsDesignTimeCreatable=True}"
-        Title="Score Card" Height="350" Width="700">
+        Title="Score Card" Height="350" Width="800">
     <Window.Resources>
         <local:PossibilityConverter x:Key="PossibilityConverter"/>
         <SolidColorBrush Color="LightGray" x:Key="BorderBrush"/>
+        <SolidColorBrush Color="DarkGoldenrod" x:Key="HighlightBrush"/>
     </Window.Resources>
     <StackPanel Orientation="Horizontal">
         <Grid x:Name="Possibilities" IsSharedSizeScope="True" Margin="5">
@@ -113,8 +113,18 @@
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition SharedSizeGroup="PlayerName"/>
                                                             </Grid.ColumnDefinitions>
-                                                            <Border BorderThickness="0,0,1,1" BorderBrush="{StaticResource BorderBrush}">
-                                                                <TextBlock Text="{Binding Possibility, Converter={StaticResource PossibilityConverter}}" HorizontalAlignment="Stretch" TextAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Border BorderThickness="0,0,1,1" BorderBrush="{StaticResource BorderBrush}" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
+                                                                <TextBlock Text="{Binding Possibility, Converter={StaticResource PossibilityConverter}}"
+                                                                           HorizontalAlignment="Stretch" TextAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                                                <Setter Property="Background" Value="{StaticResource HighlightBrush}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
                                                             </Border>
                                                         </Grid>
                                                     </DataTemplate>
@@ -224,5 +234,22 @@
                 </DockPanel>
             </ScrollViewer>
         </Border>
+        <ListView ItemsSource="{Binding Solver.Changes}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding .}" HorizontalAlignment="Stretch" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Possibility.IsHighlighted}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource HighlightBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackPanel>
 </Window>
