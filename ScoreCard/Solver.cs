@@ -11,6 +11,7 @@ namespace ScoreCard
     {
         public Game Game { get; }
         public Player MyPlayer { get; }
+        public ObservableCollection<PossibilityChange> Changes { get; } = new ObservableCollection<PossibilityChange>();
 
         public IReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>> Possibilities { get; }
         public IReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>> PlayerMaybeHistory { get; }
@@ -38,7 +39,7 @@ namespace ScoreCard
             {
                 foreach (var player in Game.Players)
                 {
-                    card.Possibilities.Add(new PlayerPossibility(player));
+                    card.Possibilities.Add(new PlayerPossibility(player, Changes));
                 }
             }
 
@@ -58,7 +59,7 @@ namespace ScoreCard
                 Game.Players.ToDictionary(player => player, player => new ObservableCollection<ObservableCollection<Card>>()));
         }
 
-        public void PlayerHasCard(Player player, Card card)
+        public void PlayerHasCard(Player player, Card card, string reason)
         {
             ValidateInGame(player);
             ValidateInGame(card);
@@ -69,18 +70,18 @@ namespace ScoreCard
 
             // mark player
             player.PutCardInHand(card);
-            Possibilities[card][player].Possibility = Possibility.Holding;
+            Possibilities[card][player].UpdatePossibility(Possibility.Holding, reason, null, null);
 
             // mark off other players
             foreach (var playerPossibility in Possibilities[card].Values.Where(p => !ReferenceEquals(p.Player, player)))
             {
-                playerPossibility.Possibility = Possibility.NotHolding;
+                playerPossibility.UpdatePossibility(Possibility.NotHolding, reason, null, null);
             }
 
             MakeInferences();
         }
 
-        public void PlayerDoesNotHaveCards(Player player, IEnumerable<Card> cardsTheyDontHave)
+        public void PlayerDoesNotHaveCards(Player player, IEnumerable<Card> cardsTheyDontHave, string reason)
         {
             ValidateInGame(player);
             var cards = ValidateCards(cardsTheyDontHave);
@@ -94,13 +95,13 @@ namespace ScoreCard
 
             foreach (var card in cards)
             {
-                Possibilities[card][player].Possibility = Possibility.NotHolding;
+                Possibilities[card][player].UpdatePossibility(Possibility.NotHolding, reason, null, null);
             }
 
             MakeInferences();
         }
 
-        public void PlayerMightHaveCards(Player player, IEnumerable<Card> cardsTheyMightHave)
+        public void PlayerMightHaveCards(Player player, IEnumerable<Card> cardsTheyMightHave, string reason)
         {
             ValidateInGame(player);
             var cards = ValidateCards(cardsTheyMightHave);
@@ -119,7 +120,7 @@ namespace ScoreCard
             }
             foreach (var card in maybes)
             {
-                Possibilities[card][player].Possibility = Possibility.Maybe;
+                Possibilities[card][player].UpdatePossibility(Possibility.Maybe, reason, null, null);
             }
 
             // can't add to maybe history if one of them is already in their hand
@@ -129,8 +130,9 @@ namespace ScoreCard
             {
                 if (maybes.Count == 1)
                 {
+                    var card = maybes[0];
                     // no need to add it to the list, just mark it as Holding
-                    PlayerHasCard(player, maybes.First());
+                    PlayerHasCard(player, card, $"{card.Name} is the last card in a maybe list for {player.Name}.");
                     return;
                 }
 
@@ -153,7 +155,8 @@ namespace ScoreCard
         public void SuggestionLooped(Player player, IEnumerable<Card> cards)
         {
             // mark cards they don't have as accusations
-            MarkCardsAsAccusations(cards.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding));
+            MarkCardsAsAccusations(cards.Where(card => Possibilities[card][player].Possibility == Possibility.NotHolding),
+                $"{player.Name} looped and didn't have this card.");
 
             // mark cards we don't know enough about as maybe and save for later
             var unknownCards = cards.Where(card => Possibilities[card][player].Possibility <= Possibility.Maybe).ToList();
@@ -166,7 +169,7 @@ namespace ScoreCard
             }
         }
 
-        private void MarkCardsAsAccusations(IEnumerable<Card> cards)
+        private void MarkCardsAsAccusations(IEnumerable<Card> cards, string reason)
         {
             foreach (var card in cards)
             {
@@ -175,7 +178,7 @@ namespace ScoreCard
                 // mark each player as not holding this card
                 foreach (var poss in Possibilities[card].Values)
                 {
-                    PlayerDoesNotHaveCards(poss.Player, new [] {card});
+                    PlayerDoesNotHaveCards(poss.Player, new [] {card}, reason);
                 }
             }
         }
@@ -224,7 +227,7 @@ namespace ScoreCard
                     loopHistory.Value.Remove(loop);
                 }
 
-                MarkCardsAsAccusations(accusations);
+                MarkCardsAsAccusations(accusations, $"Updates made to loop history.");
             }
         }
 
@@ -258,7 +261,7 @@ namespace ScoreCard
                 foreach (var maybe in historiesToRemove)
                 {
                     playerHistory.Value.Remove(maybe);
-                    PlayerHasCard(player, maybe.First());
+                    PlayerHasCard(player, maybe.First(), "Updates made to maybe history.");
                 }
             }
         }

@@ -117,14 +117,14 @@ namespace ScoreCard.ViewModels
                 case DialogResult.Skip:
                     return true;
                 case DialogResult.Maybe:
-                    _solver.PlayerMightHaveCards(_playersToAsk.Peek(), _selectedCards);
+                    _solver.PlayerMightHaveCards(_playersToAsk.Peek(), _selectedCards, $"{_playersToAsk.Peek().Name} showed a card to {PlayerTakingTurn.Name}.");
                     _stopped = true;
                     return false;
                 case DialogResult.None:
-                    _solver.PlayerDoesNotHaveCards(_playersToAsk.Peek(), _selectedCards);
+                    _solver.PlayerDoesNotHaveCards(_playersToAsk.Peek(), _selectedCards, $"{_playersToAsk.Peek().Name} said they didn't have this card when asked.");
                     return true;
                 case DialogResult.Card:
-                    _solver.PlayerHasCard(_playersToAsk.Peek(), _currentAsk.ResultCard);
+                    _solver.PlayerHasCard(_playersToAsk.Peek(), _currentAsk.ResultCard, $"{_playersToAsk.Peek().Name} showed me {_currentAsk.ResultCard}.");
                     _stopped = true;
                     return false;
                 default:

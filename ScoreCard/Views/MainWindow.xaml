@@ -234,10 +234,10 @@
                 </DockPanel>
             </ScrollViewer>
         </Border>
-        <ListView ItemsSource="{Binding Changes}">
+        <ListView ItemsSource="{Binding Solver.Changes}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding .}" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
+                    <TextBlock Text="{Binding .}" HorizontalAlignment="Stretch" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>

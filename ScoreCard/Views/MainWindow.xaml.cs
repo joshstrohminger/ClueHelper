@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
@@ -57,16 +56,10 @@ namespace ScoreCard.Views
             }
             foreach (var card in game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion))
             {
-                solver.PlayerHasCard(me, card);
+                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
                 card.IsPartOfSuggestion = false;
             }
-            var vm = new MainViewModel(solver);
-            foreach (
-                var p in solver.Possibilities.Values.SelectMany(x => x.Values).Where(x => x.Possibility == Possibility.Holding))
-            {
-                vm.Changes.Add(new PossibilityChange(p, Possibility.Unknown, p.Possibility, "Dealt card", null, null, DateTime.Now));   
-            }
-            return vm;
+            return new MainViewModel(solver);
         }
 
         private static IMainViewModel UseDefaultGame()
@@ -87,16 +80,9 @@ namespace ScoreCard.Views
 
             foreach (var card in shuffledCards.Take(cardsPerHand))
             {
-                solver.PlayerHasCard(me, card);
+                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
             }
-
-            var vm = new MainViewModel(solver);
-            foreach (
-                var p in solver.Possibilities.Values.SelectMany(x => x.Values).Where(x => x.Possibility == Possibility.Holding))
-            {
-                vm.Changes.Add(new PossibilityChange(p, Possibility.Unknown, p.Possibility, "Dealt card", null, null, DateTime.Now));
-            }
-            return vm;
+            return new MainViewModel(solver);
         }
 
         protected override void OnClosing(CancelEventArgs e)

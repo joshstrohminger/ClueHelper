@@ -14,6 +14,5 @@ namespace ScoreCard.Interfaces
         RelayCommand<Card> SuggestCard { get; }
         event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
         void ProvideSuggestionResult(ISuggestionResponseViewModel vm);
-        ObservableCollection<PossibilityChange> Changes { get; }
     }
 }

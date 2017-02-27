@@ -32,7 +32,6 @@ namespace ScoreCard.ViewModels
         public RelayCommand<Player> StartSuggestion { get; }
         public ICommand MakeSuggestion { get; }
         public RelayCommand<Card> SuggestCard { get; }
-        public ObservableCollection<PossibilityChange> Changes { get; } = new ObservableCollection<PossibilityChange>();
         public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult
         {
             add { _suggestionManager.PromptForSuggestionResult += value; }
