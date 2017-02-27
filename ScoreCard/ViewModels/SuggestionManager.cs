@@ -41,6 +41,7 @@ namespace ScoreCard.ViewModels
             }
             catch (GameException e)
             {
+                // todo, this needs to be rethought since we need to run headless sometimes
                 valid = MessageBoxResult.Yes == MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 keepGoing = false;
             }
@@ -95,6 +96,7 @@ namespace ScoreCard.ViewModels
             if (ReferenceEquals(player, _solver.MyPlayer))
             {
                 var keepGoing = true;
+                // todo, this needs to be rethought since we need to run headless sometimes
                 MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
                 if (player.Hand.Intersect(_selectedCards).Any())
                 {
