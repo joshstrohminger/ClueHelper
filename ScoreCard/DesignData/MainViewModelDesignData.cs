@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using ScoreCard.Interfaces;
@@ -20,6 +21,8 @@ namespace ScoreCard.DesignData
         {
             PromptForSuggestionResult?.Invoke(this, null);
         }
+
+        public ObservableCollection<PossibilityChange> Changes { get; } = new ObservableCollection<PossibilityChange>();
 
         public MainViewModelDesignData()
         {
@@ -51,6 +54,10 @@ namespace ScoreCard.DesignData
             Solver.SuggestionLooped(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 4 * game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
 
             shuffledCards.Last().IsPartOfAccusation = true;
+
+            Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Maybe, Possibility.NotHolding, "Someone else had it.", Solver.Game.Players.First(), Solver.Game.Players.Skip(1).First(), DateTime.Now));
+            Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Unknown, Possibility.Holding, "They had it.", Solver.Game.Players.Skip(2).First(), Solver.Game.Players.Skip(1).First(), DateTime.Now.AddMinutes(1)));
+            Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Maybe, Possibility.Holding, "Someone else had the other one.", Solver.Game.Players.Last(), Solver.Game.Players.Skip(1).First(), DateTime.Now.AddMinutes(2)));
         }
     }
 }

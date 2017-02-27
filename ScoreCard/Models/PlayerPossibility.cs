@@ -6,6 +6,17 @@ namespace ScoreCard.Models
     public class PlayerPossibility : ObservableObject
     {
         private Possibility _possibility;
+        private bool _isHighlighted;
+
+        public bool IsHighlighted
+        {
+            get { return _isHighlighted; }
+            set
+            {
+                _isHighlighted = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Possibility Possibility
         {
