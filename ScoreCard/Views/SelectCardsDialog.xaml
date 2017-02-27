@@ -20,7 +20,18 @@
                         <ItemsControl ItemsSource="{Binding Cards}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsPartOfSuggestion}" Content="{Binding Name}" Margin="2" HorizontalAlignment="Stretch"/>
+                                    <Border>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPartOfSuggestion}" Value="True">
+                                                        <Setter Property="Background" Value="LightBlue"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <CheckBox IsChecked="{Binding IsPartOfSuggestion}" Content="{Binding Name}" Margin="2" HorizontalAlignment="Stretch"/>
+                                    </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
