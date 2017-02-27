@@ -42,8 +42,9 @@ namespace ScoreCard.Models
         }
 
         public Player Player { get; }
+        public Card Card { get; }
 
-        public PlayerPossibility(Player player, ObservableCollection<PossibilityChange> changes)
+        public PlayerPossibility(Player player, Card card, ObservableCollection<PossibilityChange> changes)
         {
             if (null == player)
             {
@@ -51,6 +52,7 @@ namespace ScoreCard.Models
             }
             _changes = changes;
             Player = player;
+            Card = card;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ScoreCard.Models
 
         public override string ToString()
         {
-            return $"{DateTime:t} {Possibility.Player.Name}: {Before} => {After}, {Reason}";
+            return $"{DateTime:t} {Possibility.Player.Name}/{Possibility.Card.Name}: {Before} => {After}, {Reason}";
         }
     }
 }

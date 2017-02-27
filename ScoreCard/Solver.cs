@@ -39,7 +39,7 @@ namespace ScoreCard
             {
                 foreach (var player in Game.Players)
                 {
-                    card.Possibilities.Add(new PlayerPossibility(player, Changes));
+                    card.Possibilities.Add(new PlayerPossibility(player, card, Changes));
                 }
             }
 
