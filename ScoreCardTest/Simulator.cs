@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using ScoreCard;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
@@ -14,6 +15,7 @@ namespace ScoreCardTest
         private readonly Random _random;
         private readonly MainViewModel _vm;
         private int _currentTurnIndex;
+        private readonly ManualResetEvent _suggestionDone = new ManualResetEvent(false);
         public Card[] Solution { get; }
         public Dictionary<Player,Card[]> PlayerHands { get; }
 
@@ -57,7 +59,7 @@ namespace ScoreCardTest
         {
             for (var turn = 0; turn < maxTurns; turn++)
             {
-                RunSingleTurn();
+                RunSingleTurn(turn);
                 if (IsSolutionKnownByMe)
                 {
                     break;
@@ -65,44 +67,44 @@ namespace ScoreCardTest
             }
         }
 
-        private void RunSingleTurn()
+        private void RunSingleTurn(int turn)
         {
-            if (_currentTurnIndex > _solver.Game.Players.Count)
+            if (_currentTurnIndex >= _solver.Game.Players.Count)
             {
                 _currentTurnIndex = 0;
             }
 
             var player = _solver.Game.Players[_currentTurnIndex];
-            TakeTurnFor(player);
+            TakeTurnFor(player, turn);
 
             _currentTurnIndex++;
         }
 
-        private void TakeTurnFor(Player player)
+        private void TakeTurnFor(Player player, int turn)
         {
-            MakeRandomSuggestion(player);
+            MakeRandomSuggestion(player, turn);
         }
 
         private void OnPromptForSuggestionResult(object sender, ISuggestionResponseViewModel suggestion)
         {
             var responder = suggestion.Responder;
             var responderCards = suggestion.Cards.Intersect(PlayerHands[responder]).ToArray();
-            if (responder == _solver.MyPlayer)
-            {
-                // Another player is asking me
-                // todo, this would never occur because currently a messagebox would be shown
-                if (responderCards.Length > 0)
-                {
-                    suggestion.ResultCard = responderCards[0];
-                    suggestion.Result = DialogResult.Card;
-                }
-                else
-                {
-                    suggestion.Result = DialogResult.None;
-                }
-                _vm.ProvideSuggestionResult(suggestion);
-            }
-            else if(suggestion.Asker == _solver.MyPlayer)
+            //if (responder == _solver.MyPlayer)
+            //{
+            //    // Another player is asking me
+            //    // todo, this would never occur because currently a messagebox would be shown
+            //    if (responderCards.Length > 0)
+            //    {
+            //        suggestion.ResultCard = responderCards[0];
+            //        suggestion.Result = DialogResult.Card;
+            //    }
+            //    else
+            //    {
+            //        suggestion.Result = DialogResult.None;
+            //    }
+            //}
+            //else
+            if(suggestion.Asker == _solver.MyPlayer)
             {
                 // I am asking another player
                 if (responderCards.Length > 0)
@@ -114,17 +116,20 @@ namespace ScoreCardTest
                 {
                     suggestion.Result = DialogResult.None;
                 }
-                _vm.ProvideSuggestionResult(suggestion);
             }
             else
             {
                 // Another player is asking another player
                 suggestion.Result = responderCards.Length > 0 ? DialogResult.Maybe : DialogResult.None;
-                _vm.ProvideSuggestionResult(suggestion);
+            }
+            _vm.ProvideSuggestionResult(suggestion);
+            if (_vm.State == State.None)
+            {
+                _suggestionDone.Set();
             }
         }
 
-        private void MakeRandomSuggestion(Player player)
+        private void MakeRandomSuggestion(Player player, int turn)
         {
             var cards = _solver.Game.Categories
                 .Select(cat => cat.Cards[_random.Next(cat.Cards.Length)])
@@ -133,12 +138,18 @@ namespace ScoreCardTest
             _vm.StartSuggestion.Execute(player);
             foreach (var card in cards)
             {
-                card.IsPartOfSuggestion = true;
+                _vm.SuggestCard.Execute(card);
             }
 
             // todo need to figure out how to handle the events to get suggestion responses and message boxes
             // we need to wait until the suggestion is done
+
+            _suggestionDone.Reset();
             _vm.MakeSuggestion.Execute(null);
+            if (!_suggestionDone.WaitOne(TimeSpan.FromMilliseconds(3000)))
+            {
+                throw new TimeoutException($"Timed out when waiting for suggestion to end in turn {turn}.");
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Windows.Input;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
 using ScoreCard.MVVM;
+using ScoreCard.ViewModels;
 
 namespace ScoreCard.DesignData
 {
@@ -20,6 +21,8 @@ namespace ScoreCard.DesignData
         {
             PromptForSuggestionResult?.Invoke(this, null);
         }
+
+        public State State { get; } = State.None;
 
         public MainViewModelDesignData()
         {

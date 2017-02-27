@@ -119,7 +119,7 @@ namespace ScoreCard.ViewModels
                 CheckIfLoopShouldContinue(true, keepGoing);
                 return;
             }
-            _currentAsk = new SuggestionResponseViewModel(PlayerTakingTurn, player, _solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
+            _currentAsk = new SuggestionResponseViewModel(PlayerTakingTurn, player, _solver.MyPlayer.IsTakingTurn, _selectedCards);
             PromptForSuggestionResult?.Invoke(this, _currentAsk);
         }
 

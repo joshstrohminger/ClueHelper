@@ -13,9 +13,11 @@ namespace ScoreCard.ViewModels
         public IReadOnlyCollection<Card> Cards { get; }
         public DialogResult Result { get; set; }
         public Card ResultCard { get; set; }
+        public bool CanChooseCard { get; }
 
-        public SuggestionResponseViewModel(Player asker, Player responder, IEnumerable<Card> cards)
+        public SuggestionResponseViewModel(Player asker, Player responder, bool canChooseCard, IEnumerable<Card> cards)
         {
+            CanChooseCard = canChooseCard;
             Asker = asker;
             Responder = responder;
             Cards = new ReadOnlyCollection<Card>(cards.ToList());

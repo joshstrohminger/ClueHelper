@@ -18,8 +18,7 @@ namespace ScoreCard.ViewModels
     public class MainViewModel : ObservableObject, IMainViewModel
     {
         #region Fields
-
-        private State _state;
+        
         private readonly IList<Card> _selectedCards = new List<Card>();
         private readonly SuggestionManager _suggestionManager;
 
@@ -27,6 +26,7 @@ namespace ScoreCard.ViewModels
 
         #region Properties
 
+        public State State { get; private set; }
         public Solver Solver { get; }
         public RelayCommand<Player> StartSuggestion { get; }
         public ICommand MakeSuggestion { get; }
@@ -52,9 +52,9 @@ namespace ScoreCard.ViewModels
 
         public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
         {
-            if (_state != State.WaitingForResults)
+            if (State != State.WaitingForResults)
             {
-                throw new GameException($"Tried to provide suggestion result in state {_state}");
+                throw new GameException($"Tried to provide suggestion result in state {State}");
             }
 
             _suggestionManager.ProvideSuggestionResult(vm);
@@ -75,7 +75,7 @@ namespace ScoreCard.ViewModels
                 return;
             }
 
-            _state = State.WaitingForResults;
+            State = State.WaitingForResults;
             
             var playerTakingTurn = Solver.Game.Players.First(player => player.IsTakingTurn);
             var currentTurnIndex = Solver.Game.Players.IndexOf(playerTakingTurn);
@@ -102,12 +102,12 @@ namespace ScoreCard.ViewModels
             }
             _selectedCards.Clear();
             player.IsTakingTurn = false;
-            _state = State.None;
+            State = State.None;
         }
 
         private bool CanMakeSuggestion()
         {
-            return State.BuildingSuggestion == _state &&
+            return State.BuildingSuggestion == State &&
                 _selectedCards.Count == Solver.Game.CardsPerSuggestion &&
                 _selectedCards.Select(card => card.Category).Distinct().Count() == Solver.Game.CardsPerSuggestion;
         }
@@ -132,7 +132,7 @@ namespace ScoreCard.ViewModels
 
         private bool CanToggleCardInSuggestion(Card card)
         {
-            return State.BuildingSuggestion == _state &&
+            return State.BuildingSuggestion == State &&
                 (card.IsPartOfSuggestion || 
                 _selectedCards.All(selected => selected.Category != card.Category));
         }
@@ -149,14 +149,14 @@ namespace ScoreCard.ViewModels
             }
             else
             {
-                _state = State.BuildingSuggestion;
+                State = State.BuildingSuggestion;
                 player.IsTakingTurn = true;
             }
         }
 
         private bool CanStartSuggestion(Player player)
         {
-            return State.None == _state || player.IsTakingTurn;
+            return State.None == State || player.IsTakingTurn;
         }
 
         #endregion Private

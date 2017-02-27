@@ -13,6 +13,7 @@ namespace ScoreCard.DesignData
         public IReadOnlyCollection<Card> Cards { get; }
         public DialogResult Result { get; set; }
         public Card ResultCard { get; set; }
+        public bool CanChooseCard { get; } = true;
 
         public SuggestionResponseViewModelDesignData()
         {
@@ -23,6 +24,5 @@ namespace ScoreCard.DesignData
             Asker = new Player("Joe", a.Cards.Last());
             Cards = new ReadOnlyCollection<Card>(a.Cards.Concat(b.Cards).Concat(c.Cards).ToList());
         }
-
     }
 }

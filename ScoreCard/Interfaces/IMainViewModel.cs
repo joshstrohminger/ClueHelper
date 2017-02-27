@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ScoreCard.Models;
 using ScoreCard.MVVM;
+using ScoreCard.ViewModels;
 
 namespace ScoreCard.Interfaces
 {
@@ -14,5 +15,6 @@ namespace ScoreCard.Interfaces
         RelayCommand<Card> SuggestCard { get; }
         event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
         void ProvideSuggestionResult(ISuggestionResponseViewModel vm);
+        State State { get; }
     }
 }
