@@ -47,7 +47,7 @@ namespace ScoreCardTest
                 _solver.PlayerHasCard(me, card, "Card was dealt.");
             }
 
-            _vm = new MainViewModel(_solver);
+            _vm = new MainViewModel(_solver, true);
             _vm.PromptForSuggestionResult += OnPromptForSuggestionResult;
         }
 

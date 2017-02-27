@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using ScoreCard.Interfaces;
@@ -42,10 +41,10 @@ namespace ScoreCard.ViewModels
 
         #region Public
 
-        public MainViewModel(Solver solver)
+        public MainViewModel(Solver solver, bool headless = false)
         {
             Solver = solver;
-            _suggestionManager = new SuggestionManager(solver);
+            _suggestionManager = new SuggestionManager(solver, headless);
             StartSuggestion = new RelayCommand<Player>(DoStartSuggestion, CanStartSuggestion);
             MakeSuggestion = new RelayCommand(DoMakeSuggestion, CanMakeSuggestion);
             SuggestCard = new RelayCommand<Card>(ToggleCardInSuggestion, CanToggleCardInSuggestion);
@@ -77,8 +76,7 @@ namespace ScoreCard.ViewModels
             }
 
             _state = State.WaitingForResults;
-
-            // todo, don't do this in this odd way of throwing a dialog from the viewmodel
+            
             var playerTakingTurn = Solver.Game.Players.First(player => player.IsTakingTurn);
             var currentTurnIndex = Solver.Game.Players.IndexOf(playerTakingTurn);
             if (currentTurnIndex < 0)

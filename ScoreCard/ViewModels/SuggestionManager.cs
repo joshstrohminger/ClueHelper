@@ -13,11 +13,13 @@ namespace ScoreCard.ViewModels
         private bool _stopped;
         private Queue<Player> _playersToAsk;
         private readonly Solver _solver;
+        private readonly bool _headless;
         private ICollection<Card> _selectedCards;
 
-        public SuggestionManager(Solver solver)
+        public SuggestionManager(Solver solver, bool headless)
         {
             _solver = solver;
+            _headless = headless;
         }
 
         public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
@@ -41,8 +43,16 @@ namespace ScoreCard.ViewModels
             }
             catch (GameException e)
             {
-                // todo, this needs to be rethought since we need to run headless sometimes
-                valid = MessageBoxResult.Yes == MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                // todo, perhaps this should be some other event instead of a messagebox
+                if (_headless)
+                {
+                    valid = true;
+                }
+                else
+                {
+                    valid = MessageBoxResult.Yes ==
+                            MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
                 keepGoing = false;
             }
 
@@ -96,8 +106,11 @@ namespace ScoreCard.ViewModels
             if (ReferenceEquals(player, _solver.MyPlayer))
             {
                 var keepGoing = true;
-                // todo, this needs to be rethought since we need to run headless sometimes
-                MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
+                if (!_headless)
+                {
+                    // todo, should avoid this messagebox from the VM somehow
+                    MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
+                }
                 if (player.Hand.Intersect(_selectedCards).Any())
                 {
                     _stopped = true;
