@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using ClueHelper;
-using ClueHelper.Models;
 using ScoreCard.Interfaces;
+using ScoreCard.Models;
 
 namespace ScoreCard.ViewModels
 {

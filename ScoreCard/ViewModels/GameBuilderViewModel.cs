@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using ClueHelper;
-using ClueHelper.Models;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
 using ScoreCard.MVVM;

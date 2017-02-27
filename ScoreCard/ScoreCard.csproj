@@ -63,11 +63,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Config.cs" />
     <Compile Include="DesignData\GameBuilderViewModelDesignData.cs" />
     <Compile Include="DesignData\SelectCardsViewModelDesignData.cs" />
+    <Compile Include="GameException.cs" />
     <Compile Include="Interfaces\IGameBuilderViewModel.cs" />
     <Compile Include="Interfaces\ISelectCardsViewModel.cs" />
+    <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\PlayerPossibility.cs" />
+    <Compile Include="Models\Possibility.cs" />
     <Compile Include="Models\PotentialPlayer.cs" />
+    <Compile Include="Solver.cs" />
     <Compile Include="ViewModels\SelectCardsViewModel.cs" />
     <Compile Include="ViewModels\SuggestionResponseViewModel.cs" />
     <Compile Include="DesignData\SuggestionResponseViewModelDesignData.cs" />
@@ -141,12 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ClueHelper\ClueHelper.csproj">
-      <Project>{39662ba2-a9fe-4c34-882f-d7a5e87971f3}</Project>
-      <Name>ClueHelper</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

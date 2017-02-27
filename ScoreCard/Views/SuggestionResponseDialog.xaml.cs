@@ -1,5 +1,5 @@
-﻿using ClueHelper.Models;
-using ScoreCard.Interfaces;
+﻿using ScoreCard.Interfaces;
+using ScoreCard.Models;
 using ScoreCard.MVVM;
 
 namespace ScoreCard.Views

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ClueHelper
+namespace ScoreCard
 {
     public class GameException : Exception
     {

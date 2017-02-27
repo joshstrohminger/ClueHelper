@@ -1,5 +1,4 @@
-﻿using ClueHelper.Models;
-using ObservableObject = ScoreCard.MVVM.ObservableObject;
+﻿using ObservableObject = ScoreCard.MVVM.ObservableObject;
 
 namespace ScoreCard.Models
 {

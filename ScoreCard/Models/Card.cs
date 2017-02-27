@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using ScoreCard.MVVM;
 
-namespace ClueHelper.Models
+namespace ScoreCard.Models
 {
     public class Card : ObservableObject
     {

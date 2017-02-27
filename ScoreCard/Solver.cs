@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ClueHelper.Models;
+using ScoreCard.Models;
+// ReSharper disable All
 
-namespace ClueHelper
+namespace ScoreCard
 {
     public class Solver
     {

@@ -1,6 +1,7 @@
 ﻿using System;
+using ScoreCard.MVVM;
 
-namespace ClueHelper.Models
+namespace ScoreCard.Models
 {
     public class PlayerPossibility : ObservableObject
     {

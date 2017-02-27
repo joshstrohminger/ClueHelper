@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using ClueHelper;
 using ScoreCard.Interfaces;
 using ScoreCard.ViewModels;
 

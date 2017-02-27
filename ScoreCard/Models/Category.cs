@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ClueHelper.Models
+namespace ScoreCard.Models
 {
     public class Category
     {

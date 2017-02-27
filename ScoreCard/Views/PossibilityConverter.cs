@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using ClueHelper.Models;
+using ScoreCard.Models;
 
 namespace ScoreCard.Views
 {

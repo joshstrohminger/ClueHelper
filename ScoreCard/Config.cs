@@ -1,6 +1,6 @@
-﻿using ClueHelper.Models;
+﻿using ScoreCard.Models;
 
-namespace ClueHelper
+namespace ScoreCard
 {
     public static class Config
     {

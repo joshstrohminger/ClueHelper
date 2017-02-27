@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using ClueHelper.Models;
 using ScoreCard.Interfaces;
+using ScoreCard.Models;
 using ScoreCard.MVVM;
 
 namespace ScoreCard.ViewModels

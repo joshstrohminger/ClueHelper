@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ScoreCard.MVVM;
 
-namespace ClueHelper.Models
+namespace ScoreCard.Models
 {
     public class Player : ObservableObject
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using ClueHelper.Models;
+using ScoreCard.Models;
 
 namespace ScoreCard.Interfaces
 {

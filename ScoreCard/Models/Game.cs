@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ScoreCard.MVVM;
+// ReSharper disable All
 
-namespace ClueHelper.Models
+namespace ScoreCard.Models
 {
     public class Game : ObservableObject
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using ClueHelper;
-using ClueHelper.Models;
+using ScoreCard.Models;
 using ScoreCard.MVVM;
 
 namespace ScoreCard.Interfaces

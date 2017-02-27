@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScoreCard.Views"
-        xmlns:models="clr-namespace:ClueHelper.Models;assembly=ClueHelper"
+        xmlns:models="clr-namespace:ScoreCard.Models"
         xmlns:designData="clr-namespace:ScoreCard.DesignData"
+        xmlns:models1="clr-namespace:ScoreCard.Models"
         mc:Ignorable="d" WindowState="Maximized"
         d:DataContext="{d:DesignInstance Type=designData:MainViewModelDesignData, IsDesignTimeCreatable=True}"
         Title="Score Card" Height="350" Width="700">
@@ -70,7 +71,7 @@
             </ItemsControl>
             <ItemsControl x:Name="Groups" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Solver.Game.Categories}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="models:Category">
+                    <DataTemplate DataType="models1:Category">
                         <StackPanel Orientation="Vertical">
                             <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource BorderBrush}">
                                 <TextBlock Text="{Binding Name}" Background="LightPink" Padding="10,2"/>
