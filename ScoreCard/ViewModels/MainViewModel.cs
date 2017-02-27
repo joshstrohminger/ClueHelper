@@ -33,12 +33,35 @@ namespace ScoreCard.ViewModels
 
         #endregion Properties
 
+        private readonly SuggestionManager _suggestionManager;
+
+        public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult
+        {
+            add { _suggestionManager.PromptForSuggestionResult += value; }
+            remove { _suggestionManager.PromptForSuggestionResult -= value; }
+        }
+
         public MainViewModel(Solver solver)
         {
             Solver = solver;
+            _suggestionManager = new SuggestionManager(solver);
             StartSuggestion = new RelayCommand<Player>(DoStartSuggestion, CanStartSuggestion);
             MakeSuggestion = new RelayCommand(DoMakeSuggestion, CanMakeSuggestion);
             SuggestCard = new RelayCommand<Card>(ToggleCardInSuggestion, CanToggleCardInSuggestion);
+        }
+
+        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
+        {
+            if (_state != State.WaitingForResults)
+            {
+                throw new GameException($"Tried to provide suggestion result in state {_state}");
+            }
+
+            _suggestionManager.ProvideSuggestionResult(vm);
+            if (_suggestionManager.IsDoneAsking)
+            {
+                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
+            }
         }
 
         private void DoMakeSuggestion()
@@ -61,81 +84,22 @@ namespace ScoreCard.ViewModels
                 .Concat(Solver.Game.Players.Take(currentTurnIndex))
                 .ToList();
 
-            var stopped = false;
-
-            foreach (var player in playersToAsk)
+            _suggestionManager.AskPlayers(playerTakingTurn, playersToAsk, _selectedCards);
+            if (_suggestionManager.IsDoneAsking)
             {
-                var keepGoing = true;
-                var valid = false;
-                while (!valid)
-                {
-                    try
-                    {
-                        keepGoing = GetSuggestionResponse(player, ref stopped);
-                        valid = true;
-                    }
-                    catch (GameException e)
-                    {
-                        valid = MessageBoxResult.Yes == MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                        keepGoing = false;
-                    }
-                }
-
-                if (!keepGoing)
-                {
-                    break;
-                }
+                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
             }
+        }
 
-            if (!stopped)
-            {
-                Solver.SuggestionLooped(playerTakingTurn, _selectedCards);
-            }
-
+        private void ClearSuggestion(Player player)
+        {
             foreach (var card in _selectedCards)
             {
                 card.IsPartOfSuggestion = false;
             }
             _selectedCards.Clear();
-            Solver.Game.NextTurn();
+            player.IsTakingTurn = false;
             _state = State.None;
-        }
-
-        private bool GetSuggestionResponse(Player player, ref bool stopped)
-        {
-            if (ReferenceEquals(player, Solver.MyPlayer))
-            {
-                MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
-                if (player.Hand.Intersect(_selectedCards).Any())
-                {
-                    stopped = true;
-                    return false;
-                }
-                return true;
-            }
-            var vm = new DialogViewModel(player, Solver.MyPlayer.IsTakingTurn ? _selectedCards : new Card[0]);
-            new Views.SuggestionResponseDialog(vm).ShowDialog();
-
-            switch (vm.Result)
-            {
-                case DialogResult.Cancel:
-                    return false;
-                case DialogResult.Skip:
-                    return true;
-                case DialogResult.Maybe:
-                    Solver.PlayerMightHaveCards(player, _selectedCards);
-                    stopped = true;
-                    return false;
-                case DialogResult.None:
-                    Solver.PlayerDoesNotHaveCards(player, _selectedCards);
-                    return true;
-                case DialogResult.Card:
-                    Solver.PlayerHasCard(player, vm.ResultCard);
-                    stopped = true;
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         private bool CanMakeSuggestion()
@@ -176,12 +140,20 @@ namespace ScoreCard.ViewModels
             {
                 return;
             }
-            _state = State.BuildingSuggestion;
+            if (player.IsTakingTurn)
+            {
+                ClearSuggestion(player);
+            }
+            else
+            {
+                _state = State.BuildingSuggestion;
+                player.IsTakingTurn = true;
+            }
         }
 
         private bool CanStartSuggestion(Player player)
         {
-            return State.None == _state && player.IsTakingTurn;
+            return State.None == _state || player.IsTakingTurn;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ScoreCard.Interfaces
         Card
     }
 
-    public interface IDialogViewModel
+    public interface ISuggestionResponseViewModel
     {
         Player Responder { get; }
         IReadOnlyCollection<Card> Cards { get; }

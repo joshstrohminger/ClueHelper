@@ -1,0 +1,44 @@
+﻿<Window x:Class="ScoreCard.Views.SelectCardsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScoreCard.Views"
+        xmlns:designData="clr-namespace:ScoreCard.DesignData"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=designData:SelectCardsViewModelDesignData, IsDesignTimeCreatable=True}"
+        Title="Select Your Cards" Height="500" Width="300">
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" Text="Select the cards you were dealt" FontSize="20" Margin="2"/>
+        <Button DockPanel.Dock="Bottom" Content="Done" Command="{Binding Done}" Margin="2"/>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Categories}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="2" Background="LightGray"/>
+                        <ItemsControl ItemsSource="{Binding Cards}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPartOfSuggestion}" Value="True">
+                                                        <Setter Property="Background" Value="LightBlue"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <CheckBox IsChecked="{Binding IsPartOfSuggestion}" Content="{Binding Name}" Margin="2" HorizontalAlignment="Stretch"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

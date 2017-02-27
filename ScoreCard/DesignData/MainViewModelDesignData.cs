@@ -15,6 +15,13 @@ namespace ScoreCard.DesignData
         public ICommand MakeSuggestion { get; } = new RelayCommand(() => { });
         public RelayCommand<Card> SuggestCard { get; } = new RelayCommand<Card>(x => { });
 
+        public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
+
+        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
+        {
+            PromptForSuggestionResult?.Invoke(this, null);
+        }
+
         public MainViewModelDesignData()
         {
             var game = Config.BuildDefaultGame();
@@ -41,6 +48,8 @@ namespace ScoreCard.DesignData
             Solver.PlayerMightHaveCards(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 1).Take(game.CardsPerSuggestion));
             Solver.PlayerDoesNotHaveCards(game.Players.Skip(2).First(), shuffledCards.Skip(cardsPerHand + game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
             Solver.SuggestionLooped(game.Players.First(), shuffledCards.Skip(cardsPerHand + 2 * game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
+            Solver.SuggestionLooped(game.Players.First(), shuffledCards.Skip(cardsPerHand + 3 * game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
+            Solver.SuggestionLooped(game.Players.Skip(1).First(), shuffledCards.Skip(cardsPerHand + 4 * game.CardsPerSuggestion + 1).Take(game.CardsPerSuggestion));
 
             shuffledCards.Last().IsPartOfAccusation = true;
         }

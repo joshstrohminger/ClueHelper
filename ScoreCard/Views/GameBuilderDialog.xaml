@@ -1,0 +1,40 @@
+﻿<Window x:Class="ScoreCard.Views.GameBuilderDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScoreCard.Views"
+        xmlns:dd="urn:gong-wpf-dragdrop"
+        xmlns:designData="clr-namespace:ScoreCard.DesignData"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=designData:GameBuilderViewModelDesignData, IsDesignTimeCreatable=True}"
+        Title="Game Builder" Height="220" Width="300">
+    <DockPanel LastChildFill="True">
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button Content="Build" Command="{Binding Build}"/>
+            <Button Content="Nevermind" Click="Close_OnClick"/>
+        </UniformGrid>
+        <Button Content="Add Player" DockPanel.Dock="Top" Command="{Binding AddPlayer}"/>
+        <ListBox ItemsSource="{Binding Players}" Grid.IsSharedSizeScope="True" HorizontalContentAlignment="Stretch"
+                 dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Handle"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition SharedSizeGroup="Me"/>
+                            <ColumnDefinition SharedSizeGroup="Piece"/>
+                            <ColumnDefinition SharedSizeGroup="Remove"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="&#9776;" VerticalAlignment="Center" Cursor="SizeNS"/>
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Center"/>
+                        <RadioButton Content="Me" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Me}" GroupName="Me"/>
+                        <ComboBox VerticalContentAlignment="Center" Grid.Column="3" ItemsSource="{Binding DataContext.Pieces, RelativeSource={RelativeSource AncestorType=local:GameBuilderDialog}}" DisplayMemberPath="Name" SelectedValue="{Binding Piece}"/>
+                        <Button Content="×" Grid.Column="4" VerticalAlignment="Center" Padding="3,0" Command="{Binding DataContext.RemovePlayer, RelativeSource={RelativeSource AncestorType=local:GameBuilderDialog}}" CommandParameter="{Binding .}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using ClueHelper;
 using ScoreCard.Interfaces;
 using ScoreCard.ViewModels;
@@ -13,8 +15,50 @@ namespace ScoreCard.Views
         public MainWindow()
         {
             InitializeComponent();
-            _vm = UseDefaultGame();
+
+            var result = MessageBox.Show("Do you want play the test game?", "Play Test Game?", MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            _vm = result == MessageBoxResult.Yes ? UseDefaultGame() : BuildGame();
+
             DataContext = _vm;
+            _vm.PromptForSuggestionResult += PromptForSuggestionResult;
+        }
+
+        private void PromptForSuggestionResult(object sender, ISuggestionResponseViewModel suggestionResponseViewModel)
+        {
+            new SuggestionResponseDialog(suggestionResponseViewModel)
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            }.ShowDialog();
+            _vm.ProvideSuggestionResult(suggestionResponseViewModel);
+        }
+
+        private static IMainViewModel BuildGame()
+        {
+            var builder = new GameBuilderViewModel();
+            new GameBuilderDialog(builder).ShowDialog();
+            var game = builder.GameResult;
+            if (null == game)
+            {
+                return UseDefaultGame();
+            }
+            var myName = builder.Players.First(player => player.Me).Name;
+            var me = game.Players.First(player => player.Name == myName);
+            var solver = new Solver(game, me);
+
+            var cardsPerPlayer = (game.Categories.SelectMany(c => c.Cards).Count() - game.CardsPerSuggestion) / (double)game.Players.Count;
+            var selectCardsViewModel = new SelectCardsViewModel(game.Categories, (int)Math.Floor(cardsPerPlayer), (int)Math.Ceiling(cardsPerPlayer));
+            if (false == new SelectCardsDialog(selectCardsViewModel).ShowDialog())
+            {
+                return UseDefaultGame();
+            }
+            foreach (var card in game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion))
+            {
+                solver.PlayerHasCard(me, card);
+                card.IsPartOfSuggestion = false;
+            }
+            return new MainViewModel(solver);
         }
 
         private static IMainViewModel UseDefaultGame()
@@ -39,6 +83,12 @@ namespace ScoreCard.Views
             }
 
             return new MainViewModel(solver);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _vm.PromptForSuggestionResult -= PromptForSuggestionResult;
+            base.OnClosing(e);
         }
     }
 }

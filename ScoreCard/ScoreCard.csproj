@@ -39,6 +39,10 @@
     <StartupObject>ScoreCard.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GongSolutions.Wpf.DragDrop, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\gong-wpf-dragdrop.1.1.0\lib\net46\GongSolutions.Wpf.DragDrop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -59,18 +63,36 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\DialogViewModel.cs" />
-    <Compile Include="DesignData\DialogViewModelDesignData.cs" />
-    <Compile Include="Interfaces\IDialogViewModel.cs" />
+    <Compile Include="DesignData\GameBuilderViewModelDesignData.cs" />
+    <Compile Include="DesignData\SelectCardsViewModelDesignData.cs" />
+    <Compile Include="Interfaces\IGameBuilderViewModel.cs" />
+    <Compile Include="Interfaces\ISelectCardsViewModel.cs" />
+    <Compile Include="Models\PotentialPlayer.cs" />
+    <Compile Include="ViewModels\SelectCardsViewModel.cs" />
+    <Compile Include="ViewModels\SuggestionResponseViewModel.cs" />
+    <Compile Include="DesignData\SuggestionResponseViewModelDesignData.cs" />
+    <Compile Include="Interfaces\ISuggestionResponseViewModel.cs" />
     <Compile Include="Interfaces\IMainViewModel.cs" />
     <Compile Include="DesignData\MainViewModelDesignData.cs" />
+    <Compile Include="ViewModels\GameBuilderViewModel.cs" />
+    <Compile Include="ViewModels\SuggestionManager.cs" />
+    <Compile Include="Views\GameBuilderDialog.xaml.cs">
+      <DependentUpon>GameBuilderDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PossibilityConverter.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="MVVM\ObservableObject.cs" />
+    <Compile Include="Views\SelectCardsDialog.xaml.cs">
+      <DependentUpon>SelectCardsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SuggestionResponseDialog.xaml.cs">
       <DependentUpon>SuggestionResponseDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\GameBuilderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,6 +105,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\SelectCardsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SuggestionResponseDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -106,6 +132,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
