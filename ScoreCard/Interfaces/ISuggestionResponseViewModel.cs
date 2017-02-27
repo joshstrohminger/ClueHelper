@@ -15,6 +15,7 @@ namespace ScoreCard.Interfaces
     public interface ISuggestionResponseViewModel
     {
         Player Responder { get; }
+        Player Asker { get; }
         IReadOnlyCollection<Card> Cards { get; }
         DialogResult Result { get; set; }
         Card ResultCard { get; set; }
