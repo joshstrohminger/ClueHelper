@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using ScoreCard.Interfaces;
 
 namespace ScoreCard.Views
@@ -19,7 +7,7 @@ namespace ScoreCard.Views
     /// <summary>
     /// Interaction logic for SelectCardsDialog.xaml
     /// </summary>
-    public partial class SelectCardsDialog : Window
+    public partial class SelectCardsDialog
     {
         private readonly ISelectCardsViewModel _vm;
         public SelectCardsDialog(ISelectCardsViewModel vm)

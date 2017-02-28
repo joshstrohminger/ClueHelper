@@ -44,7 +44,7 @@ namespace ScoreCard.ViewModels
             }
 
             var player = new PotentialPlayer {Piece = _defaultCard};
-            WeakEventManager<PotentialPlayer,PropertyChangedEventArgs>.AddHandler(player, nameof(PotentialPlayer.PropertyChanged), PlayerPropertyChangedHandler);
+            WeakEventManager<PotentialPlayer,PropertyChangedEventArgs>.AddHandler(player, nameof(PropertyChanged), PlayerPropertyChangedHandler);
             Players.Add(player);
         }
 

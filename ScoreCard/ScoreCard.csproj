@@ -91,7 +91,6 @@
     <Compile Include="DesignData\MainViewModelDesignData.cs" />
     <Compile Include="ViewModels\GameBuilderViewModel.cs" />
     <Compile Include="ViewModels\SuggestionManager.cs" />
-    <Compile Include="Views\ChangeToColorConverter.cs" />
     <Compile Include="Views\GameBuilderDialog.xaml.cs">
       <DependentUpon>GameBuilderDialog.xaml</DependentUpon>
     </Compile>
