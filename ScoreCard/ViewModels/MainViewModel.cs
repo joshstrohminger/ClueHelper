@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using ScoreCard.Interfaces;
@@ -19,8 +18,7 @@ namespace ScoreCard.ViewModels
     public class MainViewModel : ObservableObject, IMainViewModel
     {
         #region Fields
-
-        private State _state;
+        
         private readonly IList<Card> _selectedCards = new List<Card>();
         private readonly SuggestionManager _suggestionManager;
 
@@ -28,6 +26,7 @@ namespace ScoreCard.ViewModels
 
         #region Properties
 
+        public State State { get; private set; }
         public Solver Solver { get; }
         public RelayCommand<Player> StartSuggestion { get; }
         public ICommand MakeSuggestion { get; }
@@ -36,6 +35,11 @@ namespace ScoreCard.ViewModels
         {
             add { _suggestionManager.PromptForSuggestionResult += value; }
             remove { _suggestionManager.PromptForSuggestionResult -= value; }
+        }
+        public event EventHandler<SimplePrompt> PromptForSimpleResponse
+        {
+            add { _suggestionManager.PromptForSimpleResponse += value; }
+            remove { _suggestionManager.PromptForSimpleResponse -= value; }
         }
 
         #endregion Properties
@@ -51,20 +55,6 @@ namespace ScoreCard.ViewModels
             SuggestCard = new RelayCommand<Card>(ToggleCardInSuggestion, CanToggleCardInSuggestion);
         }
 
-        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
-        {
-            if (_state != State.WaitingForResults)
-            {
-                throw new GameException($"Tried to provide suggestion result in state {_state}");
-            }
-
-            _suggestionManager.ProvideSuggestionResult(vm);
-            if (_suggestionManager.IsDoneAsking)
-            {
-                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
-            }
-        }
-
         #endregion Public
 
         #region Private
@@ -76,9 +66,8 @@ namespace ScoreCard.ViewModels
                 return;
             }
 
-            _state = State.WaitingForResults;
-
-            // todo, don't do this in this odd way of throwing a dialog from the viewmodel
+            State = State.WaitingForResults;
+            
             var playerTakingTurn = Solver.Game.Players.First(player => player.IsTakingTurn);
             var currentTurnIndex = Solver.Game.Players.IndexOf(playerTakingTurn);
             if (currentTurnIndex < 0)
@@ -90,10 +79,7 @@ namespace ScoreCard.ViewModels
                 .ToList();
 
             _suggestionManager.AskPlayers(playerTakingTurn, playersToAsk, _selectedCards);
-            if (_suggestionManager.IsDoneAsking)
-            {
-                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
-            }
+            ClearSuggestion(_suggestionManager.PlayerTakingTurn);
         }
 
         private void ClearSuggestion(Player player)
@@ -104,12 +90,12 @@ namespace ScoreCard.ViewModels
             }
             _selectedCards.Clear();
             player.IsTakingTurn = false;
-            _state = State.None;
+            State = State.None;
         }
 
         private bool CanMakeSuggestion()
         {
-            return State.BuildingSuggestion == _state &&
+            return State.BuildingSuggestion == State &&
                 _selectedCards.Count == Solver.Game.CardsPerSuggestion &&
                 _selectedCards.Select(card => card.Category).Distinct().Count() == Solver.Game.CardsPerSuggestion;
         }
@@ -134,7 +120,7 @@ namespace ScoreCard.ViewModels
 
         private bool CanToggleCardInSuggestion(Card card)
         {
-            return State.BuildingSuggestion == _state &&
+            return State.BuildingSuggestion == State &&
                 (card.IsPartOfSuggestion || 
                 _selectedCards.All(selected => selected.Category != card.Category));
         }
@@ -151,14 +137,14 @@ namespace ScoreCard.ViewModels
             }
             else
             {
-                _state = State.BuildingSuggestion;
+                State = State.BuildingSuggestion;
                 player.IsTakingTurn = true;
             }
         }
 
         private bool CanStartSuggestion(Player player)
         {
-            return State.None == _state || player.IsTakingTurn;
+            return State.None == State || player.IsTakingTurn;
         }
 
         #endregion Private

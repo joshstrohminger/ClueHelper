@@ -4,6 +4,7 @@ using System.Windows.Input;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
 using ScoreCard.MVVM;
+using ScoreCard.ViewModels;
 
 namespace ScoreCard.DesignData
 {
@@ -16,10 +17,9 @@ namespace ScoreCard.DesignData
 
         public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
 
-        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
-        {
-            PromptForSuggestionResult?.Invoke(this, null);
-        }
+        public event EventHandler<SimplePrompt> PromptForSimpleResponse;
+
+        public State State { get; } = State.None;
 
         public MainViewModelDesignData()
         {
@@ -52,9 +52,9 @@ namespace ScoreCard.DesignData
 
             shuffledCards.Last().IsPartOfAccusation = true;
 
-            //Solver.Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Maybe, Possibility.NotHolding, "Someone else had it.", Solver.Game.Players.First(), Solver.Game.Players.Skip(1).First(), DateTime.Now));
-            //Solver.Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Unknown, Possibility.Holding, "They had it.", Solver.Game.Players.Skip(2).First(), Solver.Game.Players.Skip(1).First(), DateTime.Now.AddMinutes(1)));
-            //Solver.Changes.Add(new PossibilityChange(Solver.Possibilities.Values.First().Values.First(), Possibility.Maybe, Possibility.Holding, "Someone else had the other one.", Solver.Game.Players.Last(), Solver.Game.Players.Skip(1).First(), DateTime.Now.AddMinutes(2)));
+
+            PromptForSuggestionResult?.Invoke(this, null);
+            PromptForSimpleResponse?.Invoke(this, null);
         }
     }
 }

@@ -23,6 +23,12 @@ namespace ScoreCard.Views
 
             DataContext = _vm;
             _vm.PromptForSuggestionResult += PromptForSuggestionResult;
+            _vm.PromptForSimpleResponse += PromptForSimpleResponse;
+        }
+
+        private void PromptForSimpleResponse(object sender, SimplePrompt e)
+        {
+            e.Result = MessageBox.Show(this, e.Message, e.Title, e.Button, e.Image);
         }
 
         private void PromptForSuggestionResult(object sender, ISuggestionResponseViewModel suggestionResponseViewModel)
@@ -32,7 +38,6 @@ namespace ScoreCard.Views
                 Owner = this,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             }.ShowDialog();
-            _vm.ProvideSuggestionResult(suggestionResponseViewModel);
         }
 
         private static IMainViewModel BuildGame()
