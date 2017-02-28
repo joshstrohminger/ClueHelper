@@ -13,7 +13,7 @@ namespace ScoreCard.DesignData
         public IReadOnlyCollection<Card> Cards { get; }
         public DialogResult Result { get; set; }
         public Card ResultCard { get; set; }
-        public bool CanChooseCard { get; } = true;
+        public bool CanChooseCard { get; } = false;
 
         public SuggestionResponseViewModelDesignData()
         {

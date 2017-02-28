@@ -50,6 +50,15 @@
                     CommandParameter="{x:Static interfaces:DialogResult.Skip}"/>
         </UniformGrid>
         <ItemsControl ItemsSource="{Binding Cards}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ItemsControl.Style>
+                <Style TargetType="ItemsControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanChooseCard}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"/>

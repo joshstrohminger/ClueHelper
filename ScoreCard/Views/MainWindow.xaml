@@ -234,8 +234,8 @@
                 </DockPanel>
             </ScrollViewer>
         </Border>
-        <ListView ItemsSource="{Binding Solver.Changes}">
-            <ListView.ItemTemplate>
+        <ItemsControl ItemsSource="{Binding Solver.Changes}" Margin="5">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding .}" HorizontalAlignment="Stretch" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
                         <TextBlock.Style>
@@ -249,7 +249,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </StackPanel>
 </Window>
