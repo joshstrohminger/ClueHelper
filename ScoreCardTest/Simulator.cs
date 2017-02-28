@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Windows;
 using ScoreCard;
 using ScoreCard.Interfaces;
 using ScoreCard.Models;
@@ -15,7 +15,6 @@ namespace ScoreCardTest
         private readonly Random _random;
         private readonly MainViewModel _vm;
         private int _currentTurnIndex;
-        private readonly ManualResetEvent _suggestionDone = new ManualResetEvent(false);
         public Card[] Solution { get; }
         public Dictionary<Player,Card[]> PlayerHands { get; }
 
@@ -49,22 +48,24 @@ namespace ScoreCardTest
                 _solver.PlayerHasCard(me, card, "Card was dealt.");
             }
 
-            _vm = new MainViewModel(_solver, true);
+            _vm = new MainViewModel(_solver);
             _vm.PromptForSuggestionResult += OnPromptForSuggestionResult;
+            _vm.PromptForSimpleResponse += OnPromptForSimpleResponse;
         }
 
         public bool IsSolutionKnownByMe => Solution.All(c => c.IsPartOfAccusation);
 
-        public void Run(int maxTurns = int.MaxValue)
+        public int Run(int maxTurns = int.MaxValue)
         {
             for (var turn = 0; turn < maxTurns; turn++)
             {
                 RunSingleTurn(turn);
                 if (IsSolutionKnownByMe)
                 {
-                    break;
+                    return turn + 1;
                 }       
             }
+            return maxTurns;
         }
 
         private void RunSingleTurn(int turn)
@@ -85,25 +86,27 @@ namespace ScoreCardTest
             MakeRandomSuggestion(player, turn);
         }
 
+        private void OnPromptForSimpleResponse(object sender, SimplePrompt e)
+        {
+            switch (e.Button)
+            {
+                case MessageBoxButton.OK:
+                case MessageBoxButton.OKCancel:
+                    e.Result = MessageBoxResult.OK;
+                    break;
+                case MessageBoxButton.YesNoCancel:
+                case MessageBoxButton.YesNo:
+                    e.Result = MessageBoxResult.Yes;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         private void OnPromptForSuggestionResult(object sender, ISuggestionResponseViewModel suggestion)
         {
             var responder = suggestion.Responder;
             var responderCards = suggestion.Cards.Intersect(PlayerHands[responder]).ToArray();
-            //if (responder == _solver.MyPlayer)
-            //{
-            //    // Another player is asking me
-            //    // todo, this would never occur because currently a messagebox would be shown
-            //    if (responderCards.Length > 0)
-            //    {
-            //        suggestion.ResultCard = responderCards[0];
-            //        suggestion.Result = DialogResult.Card;
-            //    }
-            //    else
-            //    {
-            //        suggestion.Result = DialogResult.None;
-            //    }
-            //}
-            //else
             if(suggestion.Asker == _solver.MyPlayer)
             {
                 // I am asking another player
@@ -122,11 +125,6 @@ namespace ScoreCardTest
                 // Another player is asking another player
                 suggestion.Result = responderCards.Length > 0 ? DialogResult.Maybe : DialogResult.None;
             }
-            _vm.ProvideSuggestionResult(suggestion);
-            if (_vm.State == State.None)
-            {
-                _suggestionDone.Set();
-            }
         }
 
         private void MakeRandomSuggestion(Player player, int turn)
@@ -140,15 +138,11 @@ namespace ScoreCardTest
             {
                 _vm.SuggestCard.Execute(card);
             }
-
-            // todo need to figure out how to handle the events to get suggestion responses and message boxes
-            // we need to wait until the suggestion is done
-
-            _suggestionDone.Reset();
+            
             _vm.MakeSuggestion.Execute(null);
-            if (!_suggestionDone.WaitOne(TimeSpan.FromMilliseconds(3000)))
+            if (_vm.State != State.None)
             {
-                throw new TimeoutException($"Timed out when waiting for suggestion to end in turn {turn}.");
+                throw new Exception($"VM is in state {_vm.State} after making suggestions in turn {turn}.");
             }
         }
     }
