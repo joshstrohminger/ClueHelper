@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ScoreCard.Interfaces;
 using ScoreCard.Models;
 // ReSharper disable All
 
@@ -11,7 +12,7 @@ namespace ScoreCard
     {
         public Game Game { get; }
         public Player MyPlayer { get; }
-        public ObservableCollection<PossibilityChange> Changes { get; } = new ObservableCollection<PossibilityChange>();
+        public ObservableCollection<IGameChange> Changes { get; } = new ObservableCollection<IGameChange>();
 
         public IReadOnlyDictionary<Card, Dictionary<Player, PlayerPossibility>> Possibilities { get; }
         public IReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>> PlayerMaybeHistory { get; }
@@ -57,6 +58,15 @@ namespace ScoreCard
 
             PlayerLoopHistory = new ReadOnlyDictionary<Player, ObservableCollection<ObservableCollection<Card>>>(
                 Game.Players.ToDictionary(player => player, player => new ObservableCollection<ObservableCollection<Card>>()));
+        }
+
+        public void PlayerWasDealtCards(Player player, IEnumerable<Card> cards)
+        {
+            Changes.Add(new CardsDealt(DateTime.Now, player, cards));
+            foreach (var card in cards)
+            {
+                PlayerHasCard(player, card, $"{player.Name} was dealt card {card.Name}");
+            }
         }
 
         public void PlayerHasCard(Player player, Card card, string reason)

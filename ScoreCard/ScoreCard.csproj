@@ -68,8 +68,10 @@
     <Compile Include="DesignData\SelectCardsViewModelDesignData.cs" />
     <Compile Include="GameException.cs" />
     <Compile Include="Interfaces\IGameBuilderViewModel.cs" />
+    <Compile Include="Interfaces\IGameChange.cs" />
     <Compile Include="Interfaces\ISelectCardsViewModel.cs" />
     <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\CardsDealt.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Player.cs" />
@@ -77,6 +79,8 @@
     <Compile Include="Models\Possibility.cs" />
     <Compile Include="Models\PossibilityChange.cs" />
     <Compile Include="Models\PotentialPlayer.cs" />
+    <Compile Include="Models\SuggestionMade.cs" />
+    <Compile Include="Models\SuggestionResponse.cs" />
     <Compile Include="Solver.cs" />
     <Compile Include="Models\SimplePrompt.cs" />
     <Compile Include="ViewModels\SelectCardsViewModel.cs" />
@@ -87,6 +91,7 @@
     <Compile Include="DesignData\MainViewModelDesignData.cs" />
     <Compile Include="ViewModels\GameBuilderViewModel.cs" />
     <Compile Include="ViewModels\SuggestionManager.cs" />
+    <Compile Include="Views\ChangeToColorConverter.cs" />
     <Compile Include="Views\GameBuilderDialog.xaml.cs">
       <DependentUpon>GameBuilderDialog.xaml</DependentUpon>
     </Compile>

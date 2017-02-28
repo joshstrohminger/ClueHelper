@@ -1,9 +1,9 @@
 ﻿using System;
-using ScoreCard.MVVM;
+using ScoreCard.Interfaces;
 
 namespace ScoreCard.Models
 {
-    public class PossibilityChange : ObservableObject
+    public class PossibilityChange : IGameChange
     {
         public PlayerPossibility Possibility { get; }
         public Possibility Before { get; }

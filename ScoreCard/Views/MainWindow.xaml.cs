@@ -59,9 +59,10 @@ namespace ScoreCard.Views
             {
                 return UseDefaultGame();
             }
-            foreach (var card in game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion))
+            var cardsDealt = game.Categories.SelectMany(c => c.Cards).Where(c => c.IsPartOfSuggestion).ToArray();
+            solver.PlayerWasDealtCards(me, cardsDealt);
+            foreach (var card in cardsDealt)
             {
-                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
                 card.IsPartOfSuggestion = false;
             }
             return new MainViewModel(solver);
@@ -83,10 +84,8 @@ namespace ScoreCard.Views
 
             var cardsPerHand = shuffledCards.Length / game.Players.Count;
 
-            foreach (var card in shuffledCards.Take(cardsPerHand))
-            {
-                solver.PlayerHasCard(me, card, $"{me.Name} was dealt card.");
-            }
+            solver.PlayerWasDealtCards(me, shuffledCards.Take(cardsPerHand));
+
             return new MainViewModel(solver);
         }
 

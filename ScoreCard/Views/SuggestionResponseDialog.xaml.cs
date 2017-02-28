@@ -22,6 +22,10 @@ namespace ScoreCard.Views
             DataContext = _vm;
             CloseWithResult = new RelayCommand<DialogResult>(DoCloseWithResult);
             CloseWithCard = new RelayCommand<Card>(DoCloseWithCard);
+            if (!_vm.CanChooseCard)
+            {
+                Height = 150;
+            }
         }
 
         private void DoCloseWithCard(Card card)

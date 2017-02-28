@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ScoreCard.Interfaces;
 using ScoreCard.MVVM;
 
 namespace ScoreCard.Models
 {
     public class PlayerPossibility : ObservableObject
     {
-        private readonly ObservableCollection<PossibilityChange> _changes;
+        private readonly ObservableCollection<IGameChange> _changes;
         private Possibility _possibility;
         private bool _isHighlighted;
 
@@ -44,7 +45,7 @@ namespace ScoreCard.Models
         public Player Player { get; }
         public Card Card { get; }
 
-        public PlayerPossibility(Player player, Card card, ObservableCollection<PossibilityChange> changes)
+        public PlayerPossibility(Player player, Card card, ObservableCollection<IGameChange> changes)
         {
             if (null == player)
             {

@@ -240,7 +240,11 @@
                     <TextBlock Text="{Binding .}" HorizontalAlignment="Stretch" MouseEnter="HighlightedItem_OnMouseEnter" MouseLeave="HighlightedItem_OnMouseLeave">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Black"/>
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Possibility}" Value="{x:Null}">
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding Possibility.IsHighlighted}" Value="True">
                                         <Setter Property="Background" Value="{StaticResource HighlightBrush}"/>
                                     </DataTrigger>
