@@ -15,10 +15,10 @@ namespace ScoreCardTest
             _output = output;
         }
 
-        private Tuple<Simulator, int> Run()
+        private static Tuple<Simulator, int> Run()
         {
             var sim = new Simulator();
-            const int turns = 10000;
+            const int turns = 20000;
             var finishedIn = sim.Run(turns);
             sim.IsSolutionKnownByMe.Should().BeTrue("{0} should have been enough to figure it out.", turns);
             var nonSolutionCards = sim.PlayerHands.Values.SelectMany(x => x).Except(sim.Solution).ToArray();
@@ -39,10 +39,23 @@ namespace ScoreCardTest
         [Fact]
         private void RunManyTimes()
         {
-            var turns = Enumerable.Repeat(0, 2000).Select(x => Run().Item2).ToArray();
-            _output.WriteLine($"Average: {turns.Average()}");
-            _output.WriteLine($"Min: {turns.Min()}");
-            _output.WriteLine($"Max: {turns.Max()}");
+            var turns = Enumerable.Repeat(0, 3000).Select(x => Run().Item2).ToArray();
+            var average = turns.Average();
+            var allCounts = turns.GroupBy(x => x).Select(x => new {Turns = x.Key, Count = x.Count()}).OrderByDescending(x => x.Count).ToArray();
+            var most = allCounts[0].Count;
+            var modes = allCounts.Where(x => x.Count == most).Select(x => x.Turns).OrderBy(x => x).ToList();
+            var ordered = turns.OrderBy(x => x).ToArray();
+            var offset = (ordered.Length - 1) / 2;
+            var median = (ordered[offset] + ordered[ordered.Length - offset]) / 2.0;
+            var sumOfSquaresOfDifferences = turns.Select(val => (val - average) * (val - average)).Sum();
+            var sd = Math.Sqrt(sumOfSquaresOfDifferences / turns.Length);
+            _output.WriteLine($"Runs:    {turns.Length}");
+            _output.WriteLine($"Average: {average:N}");
+            _output.WriteLine($"StdDev:  {sd:N}");
+            _output.WriteLine($"Mode:    {string.Join(",", modes)} occurred {most} times");
+            _output.WriteLine($"Median:  {median:N}");
+            _output.WriteLine($"Min:     {turns.Min()}");
+            _output.WriteLine($"Max:     {turns.Max()}");
         }
     }
 }
