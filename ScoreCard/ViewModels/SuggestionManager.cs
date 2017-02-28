@@ -10,121 +10,76 @@ namespace ScoreCard.ViewModels
     public class SuggestionManager
     {
         private ISuggestionResponseViewModel _currentAsk;
-        private bool _stopped;
-        private Queue<Player> _playersToAsk;
         private readonly Solver _solver;
-        private readonly bool _headless;
         private ICollection<Card> _selectedCards;
 
-        public SuggestionManager(Solver solver, bool headless)
+        public SuggestionManager(Solver solver)
         {
             _solver = solver;
-            _headless = headless;
         }
 
         public event EventHandler<ISuggestionResponseViewModel> PromptForSuggestionResult;
+        public event EventHandler<SimplePrompt> PromptForSimpleResponse;
 
-        public bool IsDoneAsking => (_playersToAsk?.Count ?? 0) == 0;
+
         public Player PlayerTakingTurn { get; private set; }
-
-        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
-        {
-            if (!ReferenceEquals(vm, _currentAsk))
-            {
-                throw new GameException("Response was provided for a different suggestion");
-            }
-
-            var keepGoing = false;
-            var valid = false;
-            try
-            {
-                keepGoing = ProcessResult();
-                valid = true;
-            }
-            catch (GameException e)
-            {
-                // todo, perhaps this should be some other event instead of a messagebox
-                if (_headless)
-                {
-                    valid = true;
-                }
-                else
-                {
-                    valid = MessageBoxResult.Yes ==
-                            MessageBox.Show(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                }
-                keepGoing = false;
-            }
-
-            CheckIfLoopShouldContinue(valid, keepGoing);
-        }
-
-        private void CheckIfLoopShouldContinue(bool valid, bool keepGoing)
-        {
-            if (!valid)
-            {
-                AskCurrentPlayer();
-                return;
-            }
-
-            if (keepGoing)
-            {
-                _playersToAsk.Dequeue();
-                if (!IsDoneAsking)
-                {
-                    AskCurrentPlayer();
-                }
-            }
-            else
-            {
-                _playersToAsk.Clear();
-            }
-
-            if (IsDoneAsking && !_stopped)
-            {
-                _solver.SuggestionLooped(PlayerTakingTurn, _selectedCards);
-            }
-        }
 
         public void AskPlayers(Player playerTakingTurn, ICollection<Player> playersToAsk, ICollection<Card> selectedCards)
         {
-            if (!IsDoneAsking)
-            {
-                throw new GameException("Already asking players.");
-            }
-            
-            _playersToAsk = new Queue<Player>(playersToAsk);
             _selectedCards = selectedCards;
             PlayerTakingTurn = playerTakingTurn;
-            _stopped = false;
-            AskCurrentPlayer();
-        }
 
-        private void AskCurrentPlayer()
-        {
-            var player = _playersToAsk.Peek();
-            if (ReferenceEquals(player, _solver.MyPlayer))
+            var stopped = false;
+
+            foreach (var player in playersToAsk)
             {
                 var keepGoing = true;
-                if (!_headless)
+                var valid = false;
+                while (!valid)
                 {
-                    // todo, should avoid this messagebox from the VM somehow
-                    MessageBox.Show("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK);
+                    try
+                    {
+                        keepGoing = GetSuggestionResponse(player, ref stopped);
+                        valid = true;
+                    }
+                    catch (GameException e)
+                    {
+                        var prompt = new SimplePrompt(e.Message, "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                        PromptForSimpleResponse?.Invoke(this, prompt);
+                        valid = MessageBoxResult.Yes == prompt.Result;
+                        keepGoing = false;
+                    }
                 }
-                if (player.Hand.Intersect(_selectedCards).Any())
+
+                if (!keepGoing)
                 {
-                    _stopped = true;
-                    keepGoing = false;
+                    break;
                 }
-                CheckIfLoopShouldContinue(true, keepGoing);
-                return;
             }
-            _currentAsk = new SuggestionResponseViewModel(PlayerTakingTurn, player, _solver.MyPlayer.IsTakingTurn, _selectedCards);
-            PromptForSuggestionResult?.Invoke(this, _currentAsk);
+
+            if (!stopped)
+            {
+                _solver.SuggestionLooped(playerTakingTurn, _selectedCards);
+            }
         }
 
-        private bool ProcessResult()
+        private bool GetSuggestionResponse(Player player, ref bool stopped)
         {
+            if (ReferenceEquals(player, _solver.MyPlayer))
+            {
+                var prompt = new SimplePrompt("Hit OK when done.", "Hit OK when done.", MessageBoxButton.OK, MessageBoxImage.None);
+                PromptForSimpleResponse?.Invoke(this, prompt);
+                if (player.Hand.Intersect(_selectedCards).Any())
+                {
+                    stopped = true;
+                    return false;
+                }
+                return true;
+            }
+
+            _currentAsk = new SuggestionResponseViewModel(PlayerTakingTurn, player, _solver.MyPlayer.IsTakingTurn, _selectedCards);
+            PromptForSuggestionResult?.Invoke(this, _currentAsk);
+
             switch (_currentAsk.Result)
             {
                 case DialogResult.Cancel:
@@ -132,15 +87,15 @@ namespace ScoreCard.ViewModels
                 case DialogResult.Skip:
                     return true;
                 case DialogResult.Maybe:
-                    _solver.PlayerMightHaveCards(_playersToAsk.Peek(), _selectedCards, $"{_playersToAsk.Peek().Name} showed a card to {PlayerTakingTurn.Name}.");
-                    _stopped = true;
+                    _solver.PlayerMightHaveCards(player, _selectedCards, $"{player.Name} showed a card to {PlayerTakingTurn.Name}.");
+                    stopped = true;
                     return false;
                 case DialogResult.None:
-                    _solver.PlayerDoesNotHaveCards(_playersToAsk.Peek(), _selectedCards, $"{_playersToAsk.Peek().Name} said they didn't have this card when asked.");
+                    _solver.PlayerDoesNotHaveCards(player, _selectedCards, $"{player.Name} said they didn't have this card when asked.");
                     return true;
                 case DialogResult.Card:
-                    _solver.PlayerHasCard(_playersToAsk.Peek(), _currentAsk.ResultCard, $"{_playersToAsk.Peek().Name} showed me {_currentAsk.ResultCard}.");
-                    _stopped = true;
+                    _solver.PlayerHasCard(player, _currentAsk.ResultCard, $"{player.Name} showed me {_currentAsk.ResultCard}.");
+                    stopped = true;
                     return false;
                 default:
                     throw new ArgumentOutOfRangeException();

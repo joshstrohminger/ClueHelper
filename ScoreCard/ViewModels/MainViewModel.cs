@@ -36,32 +36,23 @@ namespace ScoreCard.ViewModels
             add { _suggestionManager.PromptForSuggestionResult += value; }
             remove { _suggestionManager.PromptForSuggestionResult -= value; }
         }
+        public event EventHandler<SimplePrompt> PromptForSimpleResponse
+        {
+            add { _suggestionManager.PromptForSimpleResponse += value; }
+            remove { _suggestionManager.PromptForSimpleResponse -= value; }
+        }
 
         #endregion Properties
 
         #region Public
 
-        public MainViewModel(Solver solver, bool headless = false)
+        public MainViewModel(Solver solver)
         {
             Solver = solver;
-            _suggestionManager = new SuggestionManager(solver, headless);
+            _suggestionManager = new SuggestionManager(solver);
             StartSuggestion = new RelayCommand<Player>(DoStartSuggestion, CanStartSuggestion);
             MakeSuggestion = new RelayCommand(DoMakeSuggestion, CanMakeSuggestion);
             SuggestCard = new RelayCommand<Card>(ToggleCardInSuggestion, CanToggleCardInSuggestion);
-        }
-
-        public void ProvideSuggestionResult(ISuggestionResponseViewModel vm)
-        {
-            if (State != State.WaitingForResults)
-            {
-                throw new GameException($"Tried to provide suggestion result in state {State}");
-            }
-
-            _suggestionManager.ProvideSuggestionResult(vm);
-            if (_suggestionManager.IsDoneAsking)
-            {
-                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
-            }
         }
 
         #endregion Public
@@ -88,10 +79,7 @@ namespace ScoreCard.ViewModels
                 .ToList();
 
             _suggestionManager.AskPlayers(playerTakingTurn, playersToAsk, _selectedCards);
-            if (_suggestionManager.IsDoneAsking)
-            {
-                ClearSuggestion(_suggestionManager.PlayerTakingTurn);
-            }
+            ClearSuggestion(_suggestionManager.PlayerTakingTurn);
         }
 
         private void ClearSuggestion(Player player)
