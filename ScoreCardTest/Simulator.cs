@@ -30,10 +30,10 @@ namespace ScoreCardTest
                 .OrderBy(card => _random.Next())
                 .ToList();
 
-            Solution = shuffledCards.Take(game.CardsPerSuggestion).ToArray();
-            for (var i = 0; i < game.CardsPerSuggestion; i++)
+            Solution = game.Categories.Select(cat => shuffledCards.First(c => c.Category == cat)).ToArray();
+            foreach (var card in Solution)
             {
-                shuffledCards.RemoveAt(0);
+                shuffledCards.Remove(card);
             }
 
             var numPlayers = game.Players.Count;
@@ -83,7 +83,8 @@ namespace ScoreCardTest
 
         private void TakeTurnFor(Player player, int turn)
         {
-            MakeRandomSuggestion(player, turn);
+            MakeCalculatedSuggestion(player, turn);
+            //MakeRandomSuggestion(player, turn);
         }
 
         private void OnPromptForSimpleResponse(object sender, SimplePrompt e)
@@ -127,23 +128,93 @@ namespace ScoreCardTest
             }
         }
 
-        private void MakeRandomSuggestion(Player player, int turn)
+        private void MakeCalculatedSuggestion(Player player, int turn)
         {
-            var cards = _solver.Game.Categories
-                .Select(cat => cat.Cards[_random.Next(cat.Cards.Length)])
-                .ToArray();
+            var selectedCards = _solver.Game.Categories
+                .Select(c => c.Cards)
+                .Select(cards =>
+                    cards.FirstOrDefault(c => c.IsPartOfAccusation).ToReplaceableCard(false)
+                    ?? cards.FirstOrDefault(c => c.Possibilities.All(p => p.Possibility == Possibility.Unknown)).ToReplaceableCard(false)
+                    ?? cards.FirstOrDefault(c => c.Possibilities.Any(p => p.Possibility == Possibility.Unknown) && c.Possibilities.All(p => p.Possibility != Possibility.Maybe)).ToReplaceableCard(false)
+                    ?? cards.FirstOrDefault(c => c.Possibilities.Any(p => p.Possibility <= Possibility.Maybe)).ToReplaceableCard(true)
+                    ?? cards.First().ToReplaceableCard(true)
+                ).ToArray();
 
+            // Replace all potentially unhelpful cards in the suggestion with cards the player already has.
+            // This will make the remaining "unreplaced" cards more likely to provide helpful results.
+            var maxReplaceable = Math.Min(selectedCards.Count(c => c.Replaceable) - 1, _solver.Game.CardsPerSuggestion - 1);
+            foreach(var card in selectedCards)
+            {
+                if (selectedCards.Count(c => c.IsReplaced) >= maxReplaceable)
+                {
+                    break;
+                }
+                card.Replace(PlayerHands[player].FirstOrDefault(h => h.Category == card.Original.Category));
+            }
+
+            MakeSuggestion(player, turn, selectedCards.Select(c => c.Replacement).ToArray());
+        }
+
+        //private void MakeRandomSuggestion(Player player, int turn)
+        //{
+        //    var cards = _solver.Game.Categories
+        //        .Select(cat => cat.Cards[_random.Next(cat.Cards.Length)])
+        //        .ToArray();
+        //    MakeSuggestion(player, turn, cards);
+        //}
+
+        private void MakeSuggestion(Player player, int turn, Card[] cards)
+        {
             _vm.StartSuggestion.Execute(player);
             foreach (var card in cards)
             {
                 _vm.SuggestCard.Execute(card);
             }
-            
+
             _vm.MakeSuggestion.Execute(null);
             if (_vm.State != State.None)
             {
                 throw new Exception($"VM is in state {_vm.State} after making suggestions in turn {turn}.");
             }
+        }
+    }
+
+    public class ReplaceableCard
+    {
+        private Card _replacement;
+
+        public Card Original { get; }
+        public bool Replaceable { get; }
+
+        public Card Replacement => _replacement ?? Original;
+        public bool IsReplaced => _replacement != null;
+
+        public ReplaceableCard(Card card, bool replaceable)
+        {
+            Original = card;
+            Replaceable = replaceable;
+        }
+
+        public void Replace(Card card)
+        {
+            if (Replaceable)
+            {
+                _replacement = card;
+            }
+        }
+
+        public override string ToString() => $"{Replaceable}, {Original}{(IsReplaced ? $" => {Replacement}" : "")}";
+    }
+
+    public static class SimExtensions
+    {
+        public static ReplaceableCard ToReplaceableCard(this Card card, bool replaceable)
+        {
+            if (card is null)
+            {
+                return null;
+            }
+            return new ReplaceableCard(card, replaceable);
         }
     }
 }
